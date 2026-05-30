@@ -2,6 +2,23 @@ import asyncHandler from 'express-async-handler';
 import User from '../models/User.js';
 import Employee from '../models/Employee.js';
 
+const assignableRolesByActor = {
+  super_admin: ['admin', 'hr', 'manager', 'employee'],
+  admin: ['hr', 'manager', 'employee'],
+  hr: ['manager', 'employee'],
+};
+
+const resolveAssignableRole = (actorRole, requestedRole) => {
+  const role = requestedRole || 'employee';
+  const allowedRoles = assignableRolesByActor[actorRole] || [];
+  if (!allowedRoles.includes(role)) {
+    const error = new Error('You are not allowed to assign this role');
+    error.statusCode = 403;
+    throw error;
+  }
+  return role;
+};
+
 /* ─────────────────────────────────────────────────────────────
    GET /api/employees
    Admin/HR: all employees with full profile
@@ -92,34 +109,48 @@ export const createEmployee = asyncHandler(async (req, res) => {
     joiningDate, techStack, skills, experienceLevel, experience, 
     linkedinUrl, githubUrl, address, emergencyContact, bio 
   } = req.body;
+  const normalizedEmail = String(email || '').trim().toLowerCase();
 
   if (!fullName || !email || !password) {
     res.status(400); throw new Error('fullName, email, and password are required');
   }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    res.status(400); throw new Error('A valid email is required');
+  }
+  if (typeof password !== 'string' || password.length < 8) {
+    res.status(400); throw new Error('Password must be at least 8 characters');
+  }
 
-  const existing = await User.findOne({ email: email.toLowerCase() });
+  const existing = await User.findOne({ email: normalizedEmail });
   if (existing) { res.status(409); throw new Error('Email already in use'); }
 
-  const user = await User.create({ email, password, role: role || 'employee' });
-  const employee = await Employee.create({
-    userId: user._id,
-    fullName,
-    department,
-    designation,
-    phone,
-    joiningDate: joiningDate || Date.now(),
-    techStack: techStack || [],
-    skills: skills || [],
-    experienceLevel: experienceLevel || 'junior',
-    experience: experience || 0,
-    linkedinUrl: linkedinUrl || '',
-    githubUrl: githubUrl || '',
-    address: address || {},
-    emergencyContact: emergencyContact || {},
-    bio: bio || ''
-  });
+  const userRole = resolveAssignableRole(req.user.role, role);
+  const user = await User.create({ email: normalizedEmail, password, role: userRole });
+  try {
+    const employee = await Employee.create({
+      userId: user._id,
+      fullName,
+      department,
+      designation,
+      phone,
+      joiningDate: joiningDate || Date.now(),
+      techStack: techStack || [],
+      skills: skills || [],
+      experienceLevel: experienceLevel || 'junior',
+      experience: experience || 0,
+      linkedinUrl: linkedinUrl || '',
+      githubUrl: githubUrl || '',
+      address: address || {},
+      emergencyContact: emergencyContact || {},
+      bio: bio || ''
+    });
 
-  res.status(201).json({ success: true, message: 'Employee created', employee });
+    res.status(201).json({ success: true, message: 'Employee created', employee });
+  } catch (error) {
+    // Delete the created user if employee profile creation fails
+    await User.findByIdAndDelete(user._id);
+    throw error;
+  }
 });
 
 /* ─────────────────────────────────────────────────────────────
@@ -145,7 +176,7 @@ export const updateEmployee = asyncHandler(async (req, res) => {
     'joiningDate', 'experienceLevel', 'experience'
   ];
 
-  const allowedFields = isSelf ? selfFields : [...selfFields, ...adminFields];
+  const allowedFields = isAdminOrHR ? [...selfFields, ...adminFields] : selfFields;
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) employee[field] = req.body[field];
   });
@@ -154,7 +185,8 @@ export const updateEmployee = asyncHandler(async (req, res) => {
 
   // Update role if provided by admin
   if (isAdminOrHR && req.body.role) {
-    await User.findByIdAndUpdate(employee.userId, { role: req.body.role });
+    const nextRole = resolveAssignableRole(req.user.role, req.body.role);
+    await User.findByIdAndUpdate(employee.userId, { role: nextRole });
   }
 
   await employee.populate('userId', 'email role');

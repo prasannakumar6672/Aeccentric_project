@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, User } from "lucide-react";
-import { demoCredentials } from "../lib/demoCredentials";
 import api from "../services/api";
 
 export default function AuthSwitch() {
@@ -34,18 +33,7 @@ export default function AuthSwitch() {
     if (!email || !password) { setLoginError('Please fill in all fields.'); return; }
     setIsLoggingIn(true);
     try {
-      // Demo credential fallback
-      const demoMatch = (email === demoCredentials.admin.email && password === demoCredentials.admin.password) || (email === demoCredentials.employee.email && password === demoCredentials.employee.password);
-      if (demoMatch) {
-        const role = email === demoCredentials.admin.email ? 'admin' : 'employee';
-        localStorage.setItem('ems_token', 'demo-token');
-        localStorage.setItem('ems_user', JSON.stringify({ role }));
-        navigate(role === 'admin' ? '/dashboard/admin' : '/dashboard/employee');
-        setIsLoggingIn(false);
-        return;
-      }
-
-      // Proceed with real API call
+      // Proceed with real API call first
       const res = await api.post('/auth/login', { email, password });
       const { accessToken, user } = res.data;
       localStorage.setItem('ems_token', accessToken);
@@ -65,13 +53,19 @@ export default function AuthSwitch() {
   return (
     <>
       <style>{`
+        /* === FORCE LIGHT MODE: login page is always light regardless of OS/app dark mode === */
+        .auth-page-wrapper,
+        .auth-page-wrapper * {
+          color-scheme: light !important;
+        }
 
-        .auth-container {
+        .auth-page-wrapper .auth-container {
+
           position: relative;
           width: 100%;
           max-width: 900px;
           height: 550px;
-          background: white;
+          background: #ffffff !important;
           border-radius: 20px;
           box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
           overflow: hidden;
@@ -79,7 +73,7 @@ export default function AuthSwitch() {
           margin-top: 5vh;
         }
 
-        .forms-auth-container {
+        .auth-page-wrapper .forms-auth-container {
           position: absolute;
           width: 100%;
           height: 100%;
@@ -87,7 +81,7 @@ export default function AuthSwitch() {
           left: 0;
         }
 
-        .signin-signup {
+        .auth-page-wrapper .signin-signup {
           position: absolute;
           top: 50%;
           transform: translate(-50%, -50%);
@@ -99,7 +93,7 @@ export default function AuthSwitch() {
           z-index: 3;
         }
 
-        form {
+        .auth-page-wrapper form {
           display: flex;
           align-items: center;
           justify-content: center;
@@ -111,26 +105,26 @@ export default function AuthSwitch() {
           grid-row: 1 / 2;
         }
 
-        form.sign-up-form {
+        .auth-page-wrapper form.sign-up-form {
           opacity: 0;
           z-index: 1;
         }
 
-        form.sign-in-form {
+        .auth-page-wrapper form.sign-in-form {
           z-index: 2;
         }
 
-        .title {
+        .auth-page-wrapper .title {
           font-size: 2.2rem;
-          color: #444;
+          color: #444 !important;
           margin-bottom: 10px;
           font-weight: 700;
         }
 
-        .input-field {
+        .auth-page-wrapper .input-field {
           max-width: 380px;
           width: 100%;
-          background-color: #f0f0f0;
+          background-color: #f0f0f0 !important;
           margin: 10px 0;
           height: 55px;
           border-radius: 55px;
@@ -141,37 +135,48 @@ export default function AuthSwitch() {
           transition: 0.3s;
         }
 
-        .input-field:focus-within {
-          background-color: #e8e8e8;
+        .auth-page-wrapper .input-field:focus-within {
+          background-color: #e8e8e8 !important;
           box-shadow: 0 0 0 2px #3B82F6;
         }
 
-        .input-field i {
+        .auth-page-wrapper .input-field i {
           display: flex;
           align-items: center;
           justify-content: center;
           height: 100%;
-          color: #666;
+          color: #666 !important;
           transition: 0.5s;
         }
 
-        .input-field input {
-          background: none;
+        .auth-page-wrapper .input-field input {
+          background: transparent !important;
           outline: none;
           border: none;
           line-height: 1;
           font-weight: 500;
           font-size: 1rem;
-          color: #333;
+          color: #333 !important;
           width: 100%;
+          -webkit-text-fill-color: #333 !important;
         }
 
-        .input-field input::placeholder {
-          color: #aaa;
+        .auth-page-wrapper .input-field input::placeholder {
+          color: #aaa !important;
           font-weight: 400;
+          opacity: 1 !important;
         }
 
-        .btn {
+        /* Override browser autofill dark styling */
+        .auth-page-wrapper .input-field input:-webkit-autofill,
+        .auth-page-wrapper .input-field input:-webkit-autofill:hover,
+        .auth-page-wrapper .input-field input:-webkit-autofill:focus {
+          -webkit-box-shadow: 0 0 0px 1000px #f0f0f0 inset !important;
+          -webkit-text-fill-color: #333 !important;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .auth-page-wrapper .btn {
           width: 150px;
           background-color: #3B82F6;
           border: none;
@@ -187,13 +192,13 @@ export default function AuthSwitch() {
           font-size: 0.9rem;
         }
 
-        .btn:hover {
+        .auth-page-wrapper .btn:hover {
           background-color: #5568d3;
           transform: translateY(-2px);
           box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .panels-auth-container {
+        .auth-page-wrapper .panels-auth-container {
           position: absolute;
           height: 100%;
           width: 100%;
@@ -203,7 +208,7 @@ export default function AuthSwitch() {
           grid-template-columns: repeat(2, 1fr);
         }
 
-        .panel {
+        .auth-page-wrapper .panel {
           display: flex;
           flex-direction: column;
           align-items: flex-end;
@@ -212,35 +217,35 @@ export default function AuthSwitch() {
           z-index: 4;
         }
 
-        .left-panel {
+        .auth-page-wrapper .left-panel {
           pointer-events: all;
           padding: 3rem 17% 2rem 12%;
         }
 
-        .right-panel {
+        .auth-page-wrapper .right-panel {
           pointer-events: none;
           padding: 3rem 12% 2rem 17%;
         }
 
-        .panel .content {
+        .auth-page-wrapper .panel .content {
           color: #fff;
           transition: transform 0.9s ease-in-out;
           transition-delay: 0.6s;
         }
 
-        .panel h3 {
+        .auth-page-wrapper .panel h3 {
           font-weight: 600;
           line-height: 1;
           font-size: 1.5rem;
           margin-bottom: 10px;
         }
 
-        .panel p {
+        .auth-page-wrapper .panel p {
           font-size: 0.95rem;
           padding: 0.7rem 0;
         }
 
-        .btn.transparent {
+        .auth-page-wrapper .btn.transparent {
           margin: 0;
           background: none;
           border: 2px solid #fff;
@@ -250,51 +255,51 @@ export default function AuthSwitch() {
           font-size: 0.8rem;
         }
 
-        .btn.transparent:hover {
+        .auth-page-wrapper .btn.transparent:hover {
           background: rgba(255, 255, 255, 0.1);
           transform: translateY(-2px);
         }
 
-        .right-panel .content {
+        .auth-page-wrapper .right-panel .content {
           transform: translateX(800px);
         }
 
-        .auth-container.sign-up-mode:before {
+        .auth-page-wrapper .auth-container.sign-up-mode:before {
           transform: translate(100%, -50%);
           right: 52%;
         }
 
-        .auth-container.sign-up-mode .left-panel .content {
+        .auth-page-wrapper .auth-container.sign-up-mode .left-panel .content {
           transform: translateX(-800px);
         }
 
-        .auth-container.sign-up-mode .signin-signup {
+        .auth-page-wrapper .auth-container.sign-up-mode .signin-signup {
           left: 25%;
         }
 
-        .auth-container.sign-up-mode form.sign-up-form {
+        .auth-page-wrapper .auth-container.sign-up-mode form.sign-up-form {
           opacity: 1;
           z-index: 2;
         }
 
-        .auth-container.sign-up-mode form.sign-in-form {
+        .auth-page-wrapper .auth-container.sign-up-mode form.sign-in-form {
           opacity: 0;
           z-index: 1;
         }
 
-        .auth-container.sign-up-mode .right-panel .content {
+        .auth-page-wrapper .auth-container.sign-up-mode .right-panel .content {
           transform: translateX(0%);
         }
 
-        .auth-container.sign-up-mode .left-panel {
+        .auth-page-wrapper .auth-container.sign-up-mode .left-panel {
           pointer-events: none;
         }
 
-        .auth-container.sign-up-mode .right-panel {
+        .auth-page-wrapper .auth-container.sign-up-mode .right-panel {
           pointer-events: all;
         }
 
-        .auth-container:before {
+        .auth-page-wrapper .auth-container:before {
           content: "";
           position: absolute;
           height: 2000px;
@@ -308,19 +313,19 @@ export default function AuthSwitch() {
           z-index: 1;
         }
 
-        .social-text {
+        .auth-page-wrapper .social-text {
           padding: 0.7rem 0;
           font-size: 1rem;
           color: #666;
         }
 
-        .social-media {
+        .auth-page-wrapper .social-media {
           display: flex;
           justify-content: center;
           gap: 15px;
         }
 
-        .social-icon {
+        .auth-page-wrapper .social-icon {
           height: 46px;
           width: 46px;
           display: flex;
@@ -334,17 +339,17 @@ export default function AuthSwitch() {
           cursor: pointer;
         }
 
-        .social-icon:hover {
+        .auth-page-wrapper .social-icon:hover {
           border-color: #1E3A8A;
           transform: translateY(-3px);
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .social-icon svg {
+        .auth-page-wrapper .social-icon svg {
           transition: 0.3s;
         }
 
-        .error-message {
+        .auth-page-wrapper .error-message {
           color: #e53e3e;
           font-size: 0.875rem;
           margin-top: 0.5rem;
@@ -353,55 +358,55 @@ export default function AuthSwitch() {
         }
 
         @media (max-width: 870px) {
-          .auth-container {
+          .auth-page-wrapper .auth-container {
             min-height: 800px;
             height: 100vh;
           }
-          .signin-signup {
+          .auth-page-wrapper .signin-signup {
             width: 100%;
             top: 95%;
             transform: translate(-50%, -100%);
             transition: 1s 0.8s ease-in-out;
           }
-          .signin-signup,
-          .auth-container.sign-up-mode .signin-signup {
+          .auth-page-wrapper .signin-signup,
+          .auth-page-wrapper .auth-container.sign-up-mode .signin-signup {
             left: 50%;
           }
-          .panels-auth-container {
+          .auth-page-wrapper .panels-auth-container {
             grid-template-columns: 1fr;
             grid-template-rows: 1fr 2fr 1fr;
           }
-          .panel {
+          .auth-page-wrapper .panel {
             flex-direction: row;
             justify-content: space-around;
             align-items: center;
             padding: 2.5rem 8%;
             grid-column: 1 / 2;
           }
-          .right-panel {
+          .auth-page-wrapper .right-panel {
             grid-row: 3 / 4;
           }
-          .left-panel {
+          .auth-page-wrapper .left-panel {
             grid-row: 1 / 2;
           }
-          .panel .content {
+          .auth-page-wrapper .panel .content {
             padding-right: 15%;
             transition: transform 0.9s ease-in-out;
             transition-delay: 0.8s;
           }
-          .panel h3 {
+          .auth-page-wrapper .panel h3 {
             font-size: 1.2rem;
           }
-          .panel p {
+          .auth-page-wrapper .panel p {
             font-size: 0.7rem;
             padding: 0.5rem 0;
           }
-          .btn.transparent {
+          .auth-page-wrapper .btn.transparent {
             width: 110px;
             height: 35px;
             font-size: 0.7rem;
           }
-          .auth-container:before {
+          .auth-page-wrapper .auth-container:before {
             width: 1500px;
             height: 1500px;
             transform: translateX(-50%);
@@ -411,37 +416,41 @@ export default function AuthSwitch() {
             top: initial;
             transition: 2s ease-in-out;
           }
-          .auth-container.sign-up-mode:before {
+          .auth-page-wrapper .auth-container.sign-up-mode:before {
             transform: translate(-50%, 100%);
             bottom: 32%;
             right: initial;
           }
-          .auth-container.sign-up-mode .left-panel .content {
+          .auth-page-wrapper .auth-container.sign-up-mode .left-panel .content {
             transform: translateY(-300px);
           }
-          .auth-container.sign-up-mode .right-panel .content {
+          .auth-page-wrapper .auth-container.sign-up-mode .right-panel .content {
             transform: translateY(0px);
           }
-          .right-panel .content {
+          .auth-page-wrapper .right-panel .content {
             transform: translateY(300px);
           }
-          .auth-container.sign-up-mode .signin-signup {
+          .auth-page-wrapper .auth-container.sign-up-mode .signin-signup {
             top: 5%;
             transform: translate(-50%, 0);
           }
         }
 
         @media (max-width: 570px) {
-          form {
+          .auth-page-wrapper form {
             padding: 0 1.5rem;
           }
-          .panel .content {
+          .auth-page-wrapper .panel .content {
             padding: 0.5rem 1rem;
           }
         }
       `}</style>
 
-      <div className="w-full min-h-screen bg-gradient-to-br from-[#3B82F6] to-[#1E3A8A] flex justify-center items-center p-5">
+      <div
+        className="auth-page-wrapper w-full min-h-screen flex justify-center items-center p-5"
+        style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%)', colorScheme: 'light' }}
+      >
+
         <div className="auth-container">
           <div className="forms-auth-container">
             <div className="signin-signup">
@@ -458,11 +467,11 @@ export default function AuthSwitch() {
                 </div>
                 {loginError && <p className="error-message">{loginError}</p>}
                 <input type="submit" value={isLoggingIn ? "Logging in..." : "Login"} className="btn solid" disabled={isLoggingIn} />
-                <p className="social-text">Or sign in with social platforms</p>
+                {/* <p className="social-text">Or sign in with social platforms</p> */}
                 {/* Social Icons */}
-                <div className="social-media">
+                {/* <div className="social-media">
                   <SocialIcons />
-                </div>
+                </div> */}
               </form>
 
               {/* Sign Up Form */}

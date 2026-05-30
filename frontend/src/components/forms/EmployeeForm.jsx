@@ -93,7 +93,7 @@ const EmployeeForm = ({ initialData, onSubmit, onCancel, isLoading }) => {
               <input 
                 required type="password" name="password" value={formData.password} onChange={handleChange}
                 className="w-full h-12 px-4 rounded-xl bg-slate-50 border-none text-[14px] focus:ring-2 focus:ring-[#2563EB]/20 transition-all outline-none"
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="Temporary password"
               />
             </div>
           )}

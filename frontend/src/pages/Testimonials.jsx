@@ -7,59 +7,75 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  CheckCircle2,
+  Globe,
+  Users,
 } from "lucide-react";
+import "./Testimonials.css";
 
 const TESTIMONIALS = [
   {
     name: "Rajesh Mehta",
-    company: "Mehta Engineering Solutions",
     role: "VP of Engineering",
-    industry: "Advanced Manufacturing",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face",
-    quote: "AEccentric completely transformed our rapid prototyping workflow. Their advanced 3D printing and CAD engineering solutions reduced our design-to-production cycle from months to just a few days. The precision is unmatched.",
-  },
-  {
-    name: "Suresh Patel",
-    company: "Patel Digital Networks",
-    role: "Director of Operations",
-    industry: "AI & Automation",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face",
-    quote: "Implementing AEccentric's custom AI voice agents and automated workflow pipelines was a game-changer for our customer operations. Our response times dropped by 80% while scaling customer satisfaction.",
+    company: "Mehta Engineering",
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300",
+    quote:
+      "AEccentric completely transformed our rapid prototyping workflow. Their engineering systems reduced our production cycle massively.",
+    metric: "90% Faster Delivery",
   },
   {
     name: "Priya Sharma",
-    company: "Sharma Pharma Tech",
-    role: "Head of Digital Product",
-    industry: "IT & Product Development",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b332c3e4?w=80&h=80&fit=crop&crop=face",
-    quote: "We partnered with AEccentric to build our flagship enterprise SaaS platform. Their full-stack development team delivered a high-performance, secure, and beautiful interface that has completely blown away our clients.",
+    role: "Head of Product",
+    company: "Sharma Tech",
+    image:
+      "https://images.unsplash.com/photo-1494790108755-2616b332c3e4?w=300",
+    quote:
+      "Their AI automation pipelines helped us scale operations without increasing team size.",
+    metric: "80% Automation",
   },
   {
-    name: "Anil Gupta",
-    company: "Northern AgriTech Corp",
-    role: "CTO & Co-Founder",
-    industry: "Digital Transformation",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face",
-    quote: "AEccentric guided us through a complex legacy modernization and digital transformation process. Their team integrated modern cloud infrastructure seamlessly, reducing our server latency and saving us lakhs annually.",
+    name: "Vikram Malhotra",
+    role: "Founder",
+    company: "Apex Systems",
+    image:
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300",
+    quote:
+      "The cloud architecture they built is stable, scalable, and significantly faster than our previous stack.",
+    metric: "3x Faster Infrastructure",
+  },
+  {
+    name: "Neha Reddy",
+    role: "VP Product",
+    company: "FinQuest",
+    image:
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300",
+    quote:
+      "The UI/UX quality was exceptional. The platform feels modern, premium, and enterprise ready.",
+    metric: "97% User Satisfaction",
   },
 ];
 
 const STATS = [
   {
     value: "500+",
-    label: "Enterprise Clients",
+    label: "Projects Completed",
+    icon: CheckCircle2,
   },
   {
     value: "97%",
     label: "Client Retention",
+    icon: Users,
   },
   {
     value: "4.9★",
     label: "Average Rating",
+    icon: Star,
   },
   {
     value: "15+",
     label: "Countries Served",
+    icon: Globe,
   },
 ];
 
@@ -67,15 +83,13 @@ const BRANDS = [
   "Microsoft",
   "AWS",
   "Google",
-  "Oracle",
   "NVIDIA",
+  "Oracle",
   "IBM",
 ];
 
 const Testimonials = () => {
   const [active, setActive] = useState(0);
-
-  const current = TESTIMONIALS[active];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -100,265 +114,264 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[#F5F7FB] py-28">
+    <div className="nexus-service-page">
+      <div className="page">
 
-      {/* BACKGROUND GLOW */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-blue-500/5 blur-[120px]" />
+      {/* ================= NAVBAR ================= */}
 
-      {/* GRID BG */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#0F172A 1px, transparent 1px), linear-gradient(90deg, #0F172A 1px, transparent 1px)",
-          backgroundSize: "70px 70px",
-        }}
-      />
 
-      <div className="relative z-10 max-w-[1380px] mx-auto px-6 lg:px-10">
 
-        {/* HERO */}
-        <div className="text-center max-w-5xl mx-auto mb-24">
+      {/* ================= HERO ================= */}
 
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-[#BFDBFE] bg-[#EFF6FF] text-[#2563EB] mb-8">
+      <section className="hero">
+
+        <div className="hero-left">
+
+          <div className="hero-badge">
             <Sparkles size={14} />
-            <span className="uppercase tracking-[0.28em] text-xs font-black">
-              Client Stories
-            </span>
+            CLIENT SUCCESS STORIES
           </div>
 
-          <h1 className="text-[clamp(46px,7vw,92px)] leading-[0.95] tracking-[-0.05em] font-black text-[#0B132B]">
-            Trusted by Tech
-            <br />
-            Leaders &
-            <br />
-            <span className="text-[#3B82F6]">
-              Innovators
-            </span>
+          <h1 className="hero-title">
+            Real Results Built With
+            <span> Innovation.</span>
           </h1>
 
-          <p className="mt-8 text-[#64748B] text-[18px] leading-[1.9] max-w-3xl mx-auto">
-            Helping businesses scale through custom product development, advanced engineering, and intelligent AI-powered workflows.
+          <p className="hero-description">
+            Discover how companies transformed their
+            engineering, automation, and infrastructure
+            workflows using our AI systems and modern
+            development solutions.
           </p>
+
+          <div className="hero-buttons">
+            <Link to="/contact">
+              <button className="hero-primary-btn">
+                Start Project
+              </button>
+            </Link>
+
+            <Link to="/work/case-studies">
+              <button className="hero-secondary-btn">
+                Explore Work
+              </button>
+            </Link>
+          </div>
+
         </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-24">
+        <div className="hero-right">
 
-          {STATS.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-[28px] border border-[#E5EAF3] p-8 text-center shadow-[0_10px_40px_rgba(15,23,42,0.04)] hover:-translate-y-2 transition-all duration-500"
-            >
-              <div className="text-[44px] leading-none font-black text-[#2563EB] mb-3">
+          <div className="featured-preview-card">
+
+            <img
+              src={TESTIMONIALS[active].image}
+              alt=""
+              className="preview-avatar"
+            />
+
+            <div className="preview-content">
+
+              <Quote
+                className="preview-quote-icon"
+                size={40}
+              />
+
+              <p className="preview-quote">
+                "{TESTIMONIALS[active].quote}"
+              </p>
+
+              <div className="preview-user">
+                <h4>{TESTIMONIALS[active].name}</h4>
+                <span>
+                  {TESTIMONIALS[active].role}
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* ================= STATS ================= */}
+
+      <section className="stats-row">
+
+        {STATS.map((item, index) => {
+          const Icon = item.icon;
+
+          return (
+            <div className="stat-card" key={index}>
+
+              <Icon size={28} className="stat-icon" />
+
+              <div className="stat-value">
                 {item.value}
               </div>
 
-              <div className="text-[#64748B] font-semibold">
+              <div className="stat-label">
                 {item.label}
               </div>
+
             </div>
-          ))}
-        </div>
+          );
+        })}
 
-        {/* TESTIMONIAL SECTION */}
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10 items-center">
+      </section>
 
-          {/* LEFT SIDEBAR */}
-          <div className="flex flex-col gap-5">
+      {/* ================= FEATURED TESTIMONIAL ================= */}
 
-            {TESTIMONIALS.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => setActive(index)}
-                className={`group flex items-center gap-4 rounded-[24px] p-5 transition-all duration-300 text-left border ${active === index
-                  ? "bg-white border-[#BFDBFE] shadow-[0_12px_40px_rgba(37,99,235,0.08)] scale-[1.02]"
-                  : "border-transparent hover:bg-white/70"
-                  }`}
-              >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className={`w-16 h-16 rounded-full object-cover transition-all duration-300 ${active === index
-                    ? "ring-2 ring-[#2563EB]"
-                    : ""
-                    }`}
-                />
+      <section className="featured-testimonial">
 
-                <div>
-                  <div className="text-[22px] font-bold text-[#0B132B] leading-none mb-2">
-                    {item.name}
-                  </div>
+        <div>
 
-                  <div className="text-[15px] text-[#7B8794]">
-                    {item.company}
-                  </div>
-                </div>
-              </button>
-            ))}
+          <div className="slider-actions">
+
+            <button onClick={prevSlide}>
+              <ChevronLeft size={18} />
+            </button>
+
+            <button onClick={nextSlide}>
+              <ChevronRight size={18} />
+            </button>
+
           </div>
 
-          {/* RIGHT CARD */}
-          <div className="relative bg-white rounded-[40px] border border-[#E6EAF2] p-8 md:p-14 min-h-[470px] shadow-[0_20px_70px_rgba(15,23,42,0.05)] overflow-hidden">
+          <Quote
+            size={60}
+            className="featured-quote-icon"
+          />
 
-            {/* CARD GLOW */}
-            <div className="absolute top-0 right-0 w-[320px] h-[320px] bg-blue-500/5 rounded-full blur-[80px]" />
+          <p className="featured-quote">
+            "{TESTIMONIALS[active].quote}"
+          </p>
 
-            {/* QUOTE ICON */}
-            <Quote
-              size={80}
-              className="text-[#DBEAFE] mb-8"
-              strokeWidth={1.4}
+          <div className="client-info">
+
+            <img
+              src={TESTIMONIALS[active].image}
+              alt=""
+              className="client-avatar"
             />
 
-            {/* TEXT */}
-            <div
-              key={active}
-              className="animate-[fadeIn_.4s_ease]"
-            >
-              <p className="text-[clamp(22px,2vw,36px)] leading-[1.7] text-[#334155] max-w-5xl mb-16 font-medium">
-                {current.quote}
-              </p>
+            <div>
 
-              {/* FOOTER */}
-              <div className="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-8">
-
-                {/* PROFILE */}
-                <div className="flex items-center gap-5">
-
-                  <img
-                    src={current.image}
-                    alt={current.name}
-                    className="w-20 h-20 rounded-full object-cover"
-                  />
-
-                  <div>
-                    <div className="text-[30px] font-black text-[#0B132B] mb-2">
-                      {current.name}
-                    </div>
-
-                    <div className="text-[#64748B] text-lg">
-                      {current.role} · {current.company}
-                    </div>
-
-                    <div className="flex gap-1 mt-5">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={18}
-                          fill="#FBBF24"
-                          color="#FBBF24"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* INDUSTRY */}
-                <div className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-sm whitespace-nowrap">
-                  {current.industry}
-                </div>
+              <div className="client-name">
+                {TESTIMONIALS[active].name}
               </div>
+
+              <div className="client-role">
+                {TESTIMONIALS[active].role}
+                {" • "}
+                {TESTIMONIALS[active].company}
+              </div>
+
             </div>
 
-            {/* BOTTOM NAV */}
-            <div className="flex items-center justify-between mt-14">
-
-              {/* ARROWS */}
-              <div className="flex items-center gap-3">
-
-                <button
-                  onClick={prevSlide}
-                  className="w-12 h-12 rounded-full border border-[#E2E8F0] bg-white flex items-center justify-center hover:bg-[#EFF6FF] transition-all"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-
-                <button
-                  onClick={nextSlide}
-                  className="w-12 h-12 rounded-full border border-[#E2E8F0] bg-white flex items-center justify-center hover:bg-[#EFF6FF] transition-all"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-
-              {/* DOTS */}
-              <div className="flex items-center gap-3">
-
-                {TESTIMONIALS.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActive(i)}
-                    className={`transition-all duration-300 rounded-full ${active === i
-                      ? "w-10 h-3 bg-[#2563EB]"
-                      : "w-3 h-3 bg-[#CBD5E1]"
-                      }`}
-                  />
-                ))}
-              </div>
-            </div>
           </div>
+
         </div>
 
-        {/* BRANDS */}
-        <div className="mt-28">
+        <div className="metric-card">
 
-          <p className="text-center text-[#94A3B8] uppercase tracking-[0.3em] text-xs font-bold mb-10">
-            Trusted Technology Ecosystem
-          </p>
+          <span className="metric-label">
+            KEY ACHIEVEMENT
+          </span>
 
-          <div className="flex flex-wrap justify-center gap-4">
-
-            {BRANDS.map((brand, index) => (
-              <div
-                key={index}
-                className="px-6 py-3 rounded-full border border-[#E2E8F0] bg-white text-[#334155] font-semibold shadow-sm hover:-translate-y-1 transition-all duration-300"
-              >
-                {brand}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="mt-32 bg-white border border-[#E6EAF2] rounded-[40px] p-12 md:p-20 text-center shadow-[0_20px_60px_rgba(15,23,42,0.05)]">
-
-          <h2 className="text-[clamp(34px,4vw,56px)] font-black leading-tight tracking-[-0.04em] text-[#0B132B] mb-6">
-            Ready to become our next success story?
+          <h2 className="metric-value">
+            {TESTIMONIALS[active].metric}
           </h2>
 
-          <p className="text-[#64748B] text-lg leading-[1.9] max-w-3xl mx-auto mb-10">
-            Let’s discuss your product, engineering,
-            automation pipeline, or digital transformation
-            goals.
-          </p>
+        </div>
 
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-3 px-10 py-5 rounded-full bg-[#2563EB] text-white font-black text-[15px] hover:scale-[1.03] transition-all duration-300 shadow-[0_20px_40px_rgba(37,99,235,0.25)]"
-          >
+      </section>
+
+      {/* ================= TESTIMONIAL GRID ================= */}
+
+      <section className="testimonial-grid">
+
+        {TESTIMONIALS.map((item, index) => (
+          <div className="testimonial-card" key={index}>
+
+            <div className="stars">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={14}
+                  fill="#F59E0B"
+                  color="#F59E0B"
+                />
+              ))}
+            </div>
+
+            <p className="testimonial-text">
+              "{item.quote}"
+            </p>
+
+            <div className="testimonial-footer">
+
+              <img
+                src={item.image}
+                alt=""
+                className="testimonial-avatar"
+              />
+
+              <div>
+                <h4>{item.name}</h4>
+                <span>{item.company}</span>
+              </div>
+
+            </div>
+
+          </div>
+        ))}
+
+      </section>
+
+      {/* ================= BRANDS ================= */}
+
+      <section className="brand-strip">
+
+        <div className="brand-row">
+
+          {BRANDS.map((brand, index) => (
+            <div className="brand-item" key={index}>
+              {brand}
+            </div>
+          ))}
+
+        </div>
+
+      </section>
+
+      {/* ================= CTA ================= */}
+
+      <section className="cta-banner">
+
+        <h2 className="cta-title">
+          Ready To Build Your Success Story?
+        </h2>
+
+        <p className="cta-description">
+          Let’s build modern AI systems,
+          scalable infrastructure, and
+          high-performance digital products together.
+        </p>
+
+        <Link to="/contact">
+          <button className="hero-primary-btn">
             Start Your Project
             <ArrowRight size={18} />
-          </Link>
-        </div>
-      </div>
+          </button>
+        </Link>
 
-      {/* ANIMATION */}
-      <style>
-        {`
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(12px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0px);
-            }
-          }
-        `}
-      </style>
-    </section>
+      </section>
+
+    </div>
+   </div>
   );
 };
 

@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { API_BASE_URL, apiEndpoint } from '../config/api';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: API_BASE_URL,
   timeout: 15000,
+  withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -25,7 +27,7 @@ api.interceptors.response.use(
       original._retry = true;
       try {
         const refreshRes = await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/refresh`,
+          apiEndpoint('/auth/refresh'),
           {},
           { withCredentials: true }
         );
@@ -39,6 +41,8 @@ api.interceptors.response.use(
         window.location.href = '/ems-login';
       }
     }
+    const message = err?.response?.data?.message || err?.message || 'Something went wrong';
+    window.dispatchEvent(new CustomEvent('ems:api-error', { detail: { message } }));
     return Promise.reject(err);
   }
 );

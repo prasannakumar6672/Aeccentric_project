@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom';
 
 const EmployeeTable = ({ employees, onEdit, onDelete }) => {
   return (
-    <div className="w-full bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+    <div className="dashboard-card w-full overflow-hidden">
+      <div className="overflow-x-auto custom-scrollbar">
+        <table className="data-table w-full text-left">
           <thead>
             <tr className="bg-slate-50/50 border-b border-gray-100">
               <th className="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400">Employee</th>
@@ -19,7 +19,7 @@ const EmployeeTable = ({ employees, onEdit, onDelete }) => {
               <th className="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody>
             {employees.map((emp) => (
               <tr key={emp._id} className="hover:bg-slate-50/30 transition-colors group">
                 <td className="px-6 py-4">
@@ -46,7 +46,7 @@ const EmployeeTable = ({ employees, onEdit, onDelete }) => {
                   <RoleBadge role={emp.userId?.role} />
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-[13px] font-semibold text-[#64748b]">{emp.department || 'â€”'}</span>
+                  <span className="text-[13px] font-semibold text-[#64748b]">{emp.department || '-'}</span>
                 </td>
                 <td className="px-6 py-4">
                   <StatusBadge status={emp.status} />

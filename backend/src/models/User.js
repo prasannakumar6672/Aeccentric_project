@@ -35,4 +35,7 @@ userSchema.methods.comparePassword = async function (plain) {
   return bcrypt.compare(plain, this.password);
 };
 
+userSchema.index({ role: 1, isActive: 1 });
+userSchema.index({ lastLogin: -1 });
+
 export default mongoose.model('User', userSchema);

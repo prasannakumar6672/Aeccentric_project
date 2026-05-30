@@ -29,11 +29,13 @@ const employeeSchema = new mongoose.Schema(
       street: String,
       city: String,
       state: String,
+      zip: String,
       zipCode: String,
       country: String,
     },
     emergencyContact: {
       name: String,
+      relation: String,
       relationship: String,
       phone: String,
     },
@@ -47,10 +49,12 @@ const employeeSchema = new mongoose.Schema(
       },
     ],
     reportsTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', default: null },
-    status: {
-      type: String,
-      enum: ['active', 'inactive', 'on_leave'],
-      default: 'active',
+    salary: { type: Number, default: 0 },
+    performanceScore: { type: Number, default: 85 },
+    leaveBalance: {
+      sick: { type: Number, default: 12 },
+      annual: { type: Number, default: 15 },
+      casual: { type: Number, default: 10 },
     },
   },
   { timestamps: true }
@@ -59,10 +63,36 @@ const employeeSchema = new mongoose.Schema(
 /* Auto-generate employeeId before first save */
 employeeSchema.pre('save', async function (next) {
   if (this.isNew && !this.employeeId) {
-    const count = await mongoose.model('Employee').countDocuments();
-    this.employeeId = `AEC${String(count + 1).padStart(3, '0')}`;
+    let nextIdNumber = 1;
+    const lastEmployee = await mongoose.model('Employee')
+      .findOne({}, { employeeId: 1 })
+      .sort({ employeeId: -1 });
+    
+    if (lastEmployee && lastEmployee.employeeId) {
+      const match = lastEmployee.employeeId.match(/\d+/);
+      if (match) {
+        nextIdNumber = parseInt(match[0], 10) + 1;
+      }
+    }
+    
+    // Just in case of collision, keep incrementing until unique
+    let unique = false;
+    while (!unique) {
+      const candidateId = `AEC${String(nextIdNumber).padStart(3, '0')}`;
+      const existing = await mongoose.model('Employee').findOne({ employeeId: candidateId });
+      if (!existing) {
+        this.employeeId = candidateId;
+        unique = true;
+      } else {
+        nextIdNumber++;
+      }
+    }
   }
   next();
 });
+
+employeeSchema.index({ status: 1, department: 1 });
+employeeSchema.index({ fullName: 'text', employeeId: 'text', designation: 'text' });
+employeeSchema.index({ reportsTo: 1 });
 
 export default mongoose.model('Employee', employeeSchema);

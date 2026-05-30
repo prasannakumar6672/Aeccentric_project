@@ -3,6 +3,7 @@ import api from '../../../services/api';
 import ProfileHeader from '../../../components/profile/ProfileHeader';
 import { Mail, Phone, MapPin, Briefcase, Shield, Calendar, Edit2, Save, X } from 'lucide-react';
 import { FaLinkedin, FaGithub } from 'react-icons/fa';
+import { demoDashboardData } from './employeeWorkspaceData';
 
 const ProfilePage = () => {
   const [employee, setEmployee] = useState(null);
@@ -15,8 +16,8 @@ const ProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const res = await api.get('/employees');
-        if (res.data.employees?.length > 0) {
-          const emp = res.data.employees[0];
+        if (res.data.success) {
+          const emp = res.data.employees?.[0] || { _id: 'demo-profile', ...demoDashboardData.profile, phone: '+91 98765 43210', bio: 'Frontend engineer focused on employee experience, dashboards, and workflow systems.', skills: ['React', 'UX Systems', 'Data Visualization'], techStack: ['React', 'Node.js', 'MongoDB'], address: { city: 'Bengaluru', state: 'Karnataka', country: 'India' } };
           setEmployee(emp);
           setFormData({
             phone: emp.phone || '',
@@ -30,6 +31,17 @@ const ProfilePage = () => {
         }
       } catch (err) {
         console.error('Error fetching profile:', err);
+        const emp = { _id: 'demo-profile', ...demoDashboardData.profile, phone: '+91 98765 43210', bio: 'Frontend engineer focused on employee experience, dashboards, and workflow systems.', skills: ['React', 'UX Systems', 'Data Visualization'], techStack: ['React', 'Node.js', 'MongoDB'], address: { city: 'Bengaluru', state: 'Karnataka', country: 'India' } };
+        setEmployee(emp);
+        setFormData({
+          phone: emp.phone,
+          bio: emp.bio,
+          linkedinUrl: '',
+          githubUrl: '',
+          address: emp.address,
+          skills: emp.skills.join(', '),
+          techStack: emp.techStack.join(', '),
+        });
       } finally {
         setLoading(false);
       }
@@ -58,6 +70,11 @@ const ProfilePage = () => {
         skills: formData.skills.split(',').map(s => s.trim()).filter(Boolean),
         techStack: formData.techStack.split(',').map(s => s.trim()).filter(Boolean),
       };
+      if (employee._id === 'demo-profile') {
+        setEmployee(prev => ({ ...prev, ...processedData }));
+        setIsEditing(false);
+        return;
+      }
       const res = await api.put(`/employees/${employee._id}`, processedData);
       setEmployee(res.data.employee);
       setIsEditing(false);

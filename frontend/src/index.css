@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+/* Switch Tailwind v4 dark mode to class-based so our ThemeContext (.dark on <html>) controls it,
+   not the OS prefers-color-scheme media query */
+@custom-variant dark (&:where(.dark, .dark *));
+
+
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    AECCENTRIC â€” Premium Design System
    CSS Custom Properties + Tailwind v4
@@ -19,7 +24,9 @@
 
   /* Text */
   --text:             #0F172A;
+  --text-secondary:   #4B5563;
   --text-muted:       #64748B;
+  --text-tertiary:    #64748B;
   --text-subtle:      #94A3B8;
   --text-inverse:     #ffffff;
 
@@ -98,7 +105,9 @@ html.dark,
 
   /* Text */
   --text:             #F1F5F9;
+  --text-secondary:   #8B949E;
   --text-muted:       #94A3B8;
+  --text-tertiary:    #484F58;
   --text-subtle:      #64748B;
   --text-hint:        #64748B; /* Local variable compatibility */
   --text-inverse:     #0F172A;
@@ -508,3 +517,80 @@ p {
 /* Custom scrollbar utility */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── COMPATIBILITY SHIMS FOR NON-STANDARD TAILWIND COLOR CLASSES ── */
+.text-slate-350,
+.text-slate-450,
+.text-gray-400,
+.text-slate-400,
+.text-gray-455,
+.text-gray-450,
+.text-slate-150,
+.text-gray-405,
+.text-slate-405,
+.dark\:text-gray-400,
+.dark\:text-slate-400,
+.dark\:text-slate-450 {
+  color: var(--text-secondary) !important;
+}
+
+.text-gray-955,
+.text-gray-905,
+.text-gray-805,
+.text-gray-808,
+.text-gray-900 {
+  color: var(--text) !important;
+}
+
+.text-slate-105,
+.text-gray-655,
+.text-gray-650,
+.text-slate-650,
+.text-gray-505,
+.text-gray-555 {
+  color: var(--text-muted) !important;
+}
+
+.text-blue-650,
+.text-blue-450 {
+  color: var(--accent) !important;
+}
+
+.text-emerald-450 {
+  color: var(--dash-success, #059669) !important;
+}
+
+.text-amber-455 {
+  color: var(--dash-warning, #d97706) !important;
+}
+
+.text-teal-650 {
+  color: var(--dash-info, #0891b2) !important;
+}
+
+.text-rose-450 {
+  color: var(--dash-danger, #dc2626) !important;
+}
+
+.border-gray-150,
+.border-gray-250,
+.border-gray-255,
+.border-blue-150 {
+  border-color: var(--border) !important;
+}
+
+.bg-gray-150,
+.bg-gray-250,
+.bg-gray-450 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.bg-rose-450 {
+  background-color: rgba(220, 38, 38, 0.08) !important;
+}
+
+.placeholder-gray-450::placeholder,
+[class*="placeholder-gray-450"]::placeholder {
+  color: var(--text-subtle) !important;
+}
+

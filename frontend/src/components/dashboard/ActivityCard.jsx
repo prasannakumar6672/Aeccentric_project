@@ -1,44 +1,44 @@
 import React from 'react';
+import { MoreHorizontal } from 'lucide-react';
 
-const ActivityCard = ({ title, activities }) => {
+const ActivityCard = ({ title = 'Activity', activities = [] }) => {
   return (
-    <div className="bg-white border border-gray-100/60 rounded-[32px] p-8 shadow-sm h-full relative overflow-hidden">
-      <div className="flex justify-between items-center mb-8">
+    <div className="dashboard-card h-full">
+      <div className="card-header">
         <div>
-          <h3 className="text-[#0F172A] text-[18px] font-black tracking-tight">{title}</h3>
-          <p className="text-[#64748b] text-[12px] font-medium mt-1">Updates from your projects</p>
+          <h3 className="card-title">{title}</h3>
+          <p className="card-subtitle">Recent workspace updates</p>
         </div>
-        <button className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#2563EB] hover:text-white transition-all duration-300">
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" />
-          </svg>
+        <button className="dash-btn-secondary !min-h-9 !w-9 !p-0" aria-label="Activity actions">
+          <MoreHorizontal size={15} />
         </button>
       </div>
-      <div className="space-y-8 relative">
-        {/* Timeline vertical line */}
-        <div className="absolute top-2 left-[11px] w-[2px] h-[calc(100%-20px)] bg-slate-100 rounded-full" />
-        
-        {activities.map((activity, idx) => (
-          <div key={idx} className="flex gap-5 group cursor-pointer relative z-10">
-            <div className="relative shrink-0">
-              <div className="w-6 h-6 rounded-full bg-white border-4 border-white ring-2 ring-slate-100 group-hover:ring-[#2563EB]/30 transition-all duration-300 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-[#2563EB] shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
-              </div>
-            </div>
-            <div className="flex-1 pb-1">
-              <p className="text-[#1E293B] text-[14px] font-bold group-hover:text-[#2563EB] transition-colors duration-300">{activity.action}</p>
-              <div className="flex items-center gap-2 mt-1.5">
-                <span className="text-[12px] font-bold text-[#64748b] bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100/50">{activity.target}</span>
-                <span className="text-[12px] text-slate-400 font-medium">Â· {activity.time}</span>
-              </div>
-            </div>
+
+      <div className="card-body space-y-5">
+        {activities.length === 0 ? (
+          <div className="py-10 text-center text-sm font-semibold" style={{ color: 'var(--text-tertiary)' }}>
+            No activity yet.
           </div>
-        ))}
+        ) : (
+          activities.map((activity, idx) => (
+            <div key={`${activity.action}-${idx}`} className="relative flex gap-4">
+              {idx < activities.length - 1 && <span className="timeline-connector" />}
+              <div className="relative z-10 mt-1 h-7 w-7 rounded-full border flex items-center justify-center" style={{ background: 'var(--surface-L1)', borderColor: 'var(--border-default)' }}>
+                <span className="live-dot" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold leading-snug" style={{ color: 'var(--text-primary)' }}>
+                  {activity.action}
+                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold" style={{ color: 'var(--text-tertiary)' }}>
+                  <span className="dash-chip chip-neutral">{activity.target}</span>
+                  <span>{activity.time}</span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
-      
-      <button className="w-full mt-10 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-[#0F172A] text-[13px] font-black tracking-widest hover:bg-[#0B1A2B] hover:text-white transition-all duration-300 uppercase">
-        View Full Timeline
-      </button>
     </div>
   );
 };

@@ -1,31 +1,58 @@
 import React from 'react';
+import { Activity, TrendingDown, TrendingUp } from 'lucide-react';
 
-const StatCard = ({ title, value, change, icon, accent }) => {
+const DEFAULT_SPARK = [22, 28, 24, 36, 34, 44, 42, 52];
+
+const Sparkline = ({ data = DEFAULT_SPARK, color }) => {
+  const width = 120;
+  const height = 30;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const points = data.map((item, index) => {
+    const x = (index / (data.length - 1)) * width;
+    const y = height - ((item - min) / range) * (height - 4) - 2;
+    return `${x},${y}`;
+  }).join(' ');
+
   return (
-    <div className="bg-white border border-gray-100/60 rounded-3xl p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
-      {/* Decorative background element on hover */}
-      <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-500" 
-        style={{ backgroundColor: accent }} />
-        
-      <div className="flex justify-between items-start mb-6 relative z-10">
-        <div 
-          className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:rotate-[10deg] group-hover:scale-110 shadow-sm"
-          style={{ backgroundColor: `${accent}15`, color: accent }}
+    <svg className="kpi-sparkline" viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+      <polyline fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" points={points} />
+    </svg>
+  );
+};
+
+const StatCard = ({ title, value, change, icon, accent = '#2563eb', description, sparkData = DEFAULT_SPARK, status = 'Live' }) => {
+  const isPositive = !change || change.startsWith('+');
+  const TrendIcon = change ? (isPositive ? TrendingUp : TrendingDown) : Activity;
+
+  return (
+    <div className="kpi-card group">
+      <div className="flex items-start justify-between gap-4">
+        <div
+          className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border"
+          style={{ backgroundColor: `${accent}14`, color: accent, borderColor: `${accent}22` }}
         >
-          {React.cloneElement(icon, { size: 28 })}
+          {icon ? React.cloneElement(icon, { size: 21 }) : null}
         </div>
+
         {change && (
-          <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-[12px] font-bold ${
-            change.startsWith('+') ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'
-          }`}>
-            <span className="text-[10px]">{change.startsWith('+') ? '▲' : '▼'}</span>
-            {change.replace(/[+-]/, '')}%
-          </div>
+          <span className={`dash-chip text-[11px] font-bold ${isPositive ? 'chip-success' : 'chip-danger'}`}>
+            <TrendIcon size={11} />
+            {change}
+          </span>
         )}
       </div>
-      <div className="relative z-10">
-        <p className="text-[#64748b] text-[12px] font-bold uppercase tracking-[0.15em] mb-2">{title}</p>
-        <h3 className="text-[#0F172A] text-4xl font-black tracking-tight">{value}</h3>
+
+      <div>
+        <p className="kpi-label">{title}</p>
+        <h3 className="kpi-number mt-2">{value}</h3>
+        {description && <p className="kpi-secondary mt-2">{description}</p>}
+      </div>
+
+      <div className="flex items-end justify-between gap-3">
+        <Sparkline data={sparkData} color={accent} />
+        <span className="chip chip-info shrink-0">{status}</span>
       </div>
     </div>
   );

@@ -8,8 +8,8 @@ const ProtectedRoute = ({ allowedRoles }) => {
 
   try {
     if (userStr) user = JSON.parse(userStr);
-  } catch (e) {
-    console.error('Failed to parse user', e);
+  } catch {
+    localStorage.removeItem('ems_user');
   }
 
   // If no token or user, redirect to login

@@ -49,7 +49,7 @@ const ProfileHeader = ({ employee, onImageUpdate }) => {
             <div className="flex flex-wrap items-center gap-6 text-[#64748b]">
               <div className="flex items-center gap-2 text-[14px] font-bold">
                 <Briefcase size={16} className="text-[#2563EB]" />
-                {employee.designation} â€¢ {employee.department}
+                {employee.designation} / {employee.department}
               </div>
               <div className="flex items-center gap-2 text-[14px] font-bold">
                 <MapPin size={16} className="text-slate-400" />

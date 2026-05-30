@@ -7,7 +7,11 @@ dotenv.config({ path: '../../.env' }); // Adjust if needed
 
 async function seed() {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/aeccentric-ems', {
+    if (!process.env.MONGODB_URI) {
+      throw new Error('MONGODB_URI is required to seed users.');
+    }
+
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
@@ -24,7 +28,7 @@ async function seed() {
     
     await Employee.create({
       userId: adminUser._id,
-      fullName: 'Admin User',
+      fullName: 'Sravan Kumar',
       department: 'Management'
     });
 

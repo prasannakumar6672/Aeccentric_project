@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import ServiceLayout from "../layouts/ServiceLayout";
 import dtImg from "../assets/services/3d_printing.png";
-import { PenTool, Printer, Layers, Settings, Shield, Box, ArrowRight, ChevronDown, Star, Clock, TrendingUp, Phone } from "lucide-react";
+import { PenTool, Printer, Layers, Settings, Shield, Box, ArrowRight, ChevronDown, Star, Clock, TrendingUp, Phone, Zap } from "lucide-react";
 import "./ThreeDPrintingSolutions.css";
 
 const useReveal = () => {
@@ -63,12 +62,12 @@ const FAQS = [
 const FAQItem = ({ q, a }) => {
   const [open, setOpen] = useState(false);
   return <div className={"faq-item" + (open ? " open" : "")}>
-      <button className="faq-btn" onClick={() => setOpen(!open)}>
-        <span className="faq-q">{q}</span>
-        <ChevronDown size={17} className={"faq-chev" + (open ? " open" : "")} />
-      </button>
-      <div className={"faq-body" + (open ? " open" : " closed")}><p className="faq-a">{a}</p></div>
-    </div>;
+    <button className="faq-btn" onClick={() => setOpen(!open)}>
+      <span className="faq-q">{q}</span>
+      <ChevronDown size={17} className={"faq-chev" + (open ? " open" : "")} />
+    </button>
+    <div className={"faq-body" + (open ? " open" : " closed")}><p className="faq-a">{a}</p></div>
+  </div>;
 };
 
 export default function ThreeDPrintingSolutions() {
@@ -76,14 +75,16 @@ export default function ThreeDPrintingSolutions() {
   const [techRef, techV] = useReveal(); const [proofRef, proofV] = useReveal();
   const [faqRef, faqV] = useReveal();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <ServiceLayout title="3D Printing & Engineering" subtitle="Additive Manufacturing"
-      description="We bridge the gap between digital design and physical reality. From rapid polymer prototyping to aerospace-grade titanium production parts, we engineer complex geometries that traditional manufacturing cannot achieve."
-      accent="#EC4899" image={dtImg}
-      points={["Industrial Metal 3D Printing (SLM/DMLS)", "Design for Additive Manufacturing (DfAM)", "High-Performance Polymers (PEEK/ULTEM)", "Reverse Engineering & 3D Scanning", "Post-Processing & CNC Finishing", "Rapid Tooling & Fixtures"]}
-      hideHero={true}
-    >
+    <div className="nexus-service-page">
       <div className="page">
+
+        {/* ── NAV ── */}
+
 
         {/* HERO */}
         <section className="hero">
@@ -100,9 +101,25 @@ export default function ThreeDPrintingSolutions() {
             <div className="hero-btns">
               <Link to="/consultation" className="btn-primary" style={{ textDecoration: 'none' }}>Start a Project <ArrowRight size={14} /></Link>
             </div>
+            <div className="hero-trust">
+              <div className="hero-trust-dots">
+                {[["#EC4899", "AM"], ["#DB2777", "SLM"], ["#BE185D", "FDM"], ["#9D174D", "SLA"]].map(([bg, ini], i) => (
+                  <div key={i} className="trust-dot" style={{ background: bg }}>{ini}</div>
+                ))}
+              </div>
+              <div className="hero-trust-text">Trusted by <strong>200+ engineering teams</strong> worldwide</div>
+            </div>
           </div>
           <div className="hero-img-wrap">
             <img src={dtImg} alt="3D Printing" />
+            <div className="img-tag">💎 Additive Mfg</div>
+            <div className="img-badge">
+              <div className="img-badge-dot" />
+              <div>
+                <div className="img-badge-title">Precision Printing</div>
+                <div className="img-badge-sub">Aerospace Grade · 0.01mm tolerance</div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -121,16 +138,18 @@ export default function ThreeDPrintingSolutions() {
           <h2 className="sec-title">Six Additive Manufacturing Services.</h2>
           <p className="sec-sub">If you can imagine it, we can manufacture it â€” from overnight polymer prototypes to production titanium parts.</p>
           <div className={"svc-grid reveal" + (svcV ? " in" : "")}>
-            {SERVICES.map((svc, i) => { const Icon = svc.icon; return (
+            {SERVICES.map((svc, i) => {
+              const Icon = svc.icon; return (
                 <div key={i} className="svc-card" style={{ transitionDelay: (i * 50) + "ms" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = svc.color + "55"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}>
-                <div className="svc-icon" style={{ background: svc.color + "14", color: svc.color }}><Icon size={19} /></div>
-                <h3 className="svc-title">{svc.title}</h3>
-                <p className="svc-desc">{svc.desc}</p>
-                <div className="svc-tags">{svc.tags.map((t, j) => <span key={j} className="svc-tag" style={{ background: svc.color + "12", color: svc.color }}>{t}</span>)}</div>
-              </div>
-            ); })}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = svc.color + "55"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}>
+                  <div className="svc-icon" style={{ background: svc.color + "14", color: svc.color }}><Icon size={19} /></div>
+                  <h3 className="svc-title">{svc.title}</h3>
+                  <p className="svc-desc">{svc.desc}</p>
+                  <div className="svc-tags">{svc.tags.map((t, j) => <span key={j} className="svc-tag" style={{ background: svc.color + "12", color: svc.color }}>{t}</span>)}</div>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -178,12 +197,14 @@ export default function ThreeDPrintingSolutions() {
           <h2 className="sec-title">Numbers That Speak.</h2>
           <p className="sec-sub">Documented outcomes from 50,000+ printed parts across polymers and metals.</p>
           <div className={"proof-grid reveal" + (proofV ? " in" : "")}>
-            {PROOF.map((m, i) => { const Icon = m.icon; return (
-              <div key={i} className="proof-card" style={{ transitionDelay: (i * 80) + "ms" }}>
-                <div className="proof-icon"><Icon size={18} /></div>
-                <div><div className="proof-val">{m.value}</div><div className="proof-label">{m.label}</div><div className="proof-sub">{m.sub}</div></div>
-              </div>
-            ); })}
+            {PROOF.map((m, i) => {
+              const Icon = m.icon; return (
+                <div key={i} className="proof-card" style={{ transitionDelay: (i * 80) + "ms" }}>
+                  <div className="proof-icon"><Icon size={18} /></div>
+                  <div><div className="proof-val">{m.value}</div><div className="proof-label">{m.label}</div><div className="proof-sub">{m.sub}</div></div>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -206,6 +227,6 @@ export default function ThreeDPrintingSolutions() {
         </section>
 
       </div>
-    </ServiceLayout>
+    </div>
   );
 }

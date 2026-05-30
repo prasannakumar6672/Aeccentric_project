@@ -7,7 +7,7 @@ const DeleteConfirmationModal = ({ isOpen, onConfirm, onCancel, title, message, 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onCancel} />
-      <div className="relative w-full max-w-md bg-white rounded-[32px] shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="dashboard-card relative w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-300">
         <div className="p-8">
           <div className="w-16 h-16 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 mb-6 mx-auto">
             <AlertTriangle size={32} />

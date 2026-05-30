@@ -4,15 +4,34 @@ import User from '../models/User.js';
 import Employee from '../models/Employee.js';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/tokenUtils.js';
 import { sendEmail } from '../config/email.js';
+import { isProduction } from '../config/env.js';
 
 /* ── Helper: send refresh token as HttpOnly cookie ── */
 const setRefreshCookie = (res, token) => {
   res.cookie('ems_refresh', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
+};
+
+const clearRefreshCookie = (res) => {
+  res.clearCookie('ems_refresh', {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+  });
+};
+
+const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
+const isEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const validatePassword = (password) => {
+  if (typeof password !== 'string' || password.length < 8) {
+    const error = new Error('Password must be at least 8 characters');
+    error.statusCode = 400;
+    throw error;
+  }
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -21,17 +40,22 @@ const setRefreshCookie = (res, token) => {
    Note: In production use invite tokens; role defaults to 'employee'
 ───────────────────────────────────────────────────────────── */
 export const signup = asyncHandler(async (req, res) => {
-  const { fullName, email, password, role, department, designation } = req.body;
+  const { fullName, email, password, department, designation } = req.body;
+  const normalizedEmail = normalizeEmail(email);
 
   if (!fullName || !email || !password) {
     res.status(400); throw new Error('fullName, email, and password are required');
   }
+  if (!isEmail(normalizedEmail)) {
+    res.status(400); throw new Error('A valid email is required');
+  }
+  validatePassword(password);
 
-  const existing = await User.findOne({ email: email.toLowerCase() });
+  const existing = await User.findOne({ email: normalizedEmail });
   if (existing) { res.status(409); throw new Error('Email already registered'); }
 
   // Create User (password hashed in pre-save hook)
-  const user = await User.create({ email, password, role: role || 'employee' });
+  const user = await User.create({ email: normalizedEmail, password, role: 'employee' });
 
   // Create linked Employee profile
   await Employee.create({ userId: user._id, fullName, department, designation });
@@ -57,9 +81,11 @@ export const signup = asyncHandler(async (req, res) => {
 ───────────────────────────────────────────────────────────── */
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  const normalizedEmail = normalizeEmail(email);
   if (!email || !password) { res.status(400); throw new Error('Email and password are required'); }
+  if (!isEmail(normalizedEmail)) { res.status(400); throw new Error('A valid email is required'); }
 
-  const user = await User.findOne({ email: email.toLowerCase() }).select('+password +refreshToken');
+  const user = await User.findOne({ email: normalizedEmail }).select('+password +refreshToken');
   if (!user || !user.isActive) { res.status(401); throw new Error('Invalid credentials'); }
 
   const match = await user.comparePassword(password);
@@ -102,7 +128,7 @@ export const logout = asyncHandler(async (req, res) => {
     // Clear stored refresh token in DB
     await User.findOneAndUpdate({ refreshToken: token }, { refreshToken: null });
   }
-  res.clearCookie('ems_refresh');
+  clearRefreshCookie(res);
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
@@ -112,11 +138,30 @@ export const logout = asyncHandler(async (req, res) => {
 ───────────────────────────────────────────────────────────── */
 export const refresh = asyncHandler(async (req, res) => {
   const token = req.cookies?.ems_refresh;
-  if (!token) { res.status(401); throw new Error('No refresh token'); }
+  if (!token) {
+    const error = new Error('No refresh token');
+    error.statusCode = 401;
+    res.status(401);
+    throw error;
+  }
 
-  const decoded = verifyRefreshToken(token); // throws if invalid
+  let decoded;
+  try {
+    decoded = verifyRefreshToken(token);
+  } catch (err) {
+    const error = new Error('Refresh token invalid or expired');
+    error.statusCode = 401;
+    res.status(401);
+    throw error;
+  }
+
   const user = await User.findById(decoded.id).select('+refreshToken');
-  if (!user || user.refreshToken !== token) { res.status(401); throw new Error('Refresh token invalid or rotated'); }
+  if (!user || user.refreshToken !== token) {
+    const error = new Error('Refresh token invalid or rotated');
+    error.statusCode = 401;
+    res.status(401);
+    throw error;
+  }
 
   // Rotate refresh token (security best practice)
   const newAccess = generateAccessToken(user._id, user.role);
@@ -134,7 +179,11 @@ export const refresh = asyncHandler(async (req, res) => {
 ───────────────────────────────────────────────────────────── */
 export const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  const user = await User.findOne({ email: email?.toLowerCase() });
+  const normalizedEmail = normalizeEmail(email);
+  if (!isEmail(normalizedEmail)) {
+    return res.json({ success: true, message: 'If that email exists, an OTP has been sent.' });
+  }
+  const user = await User.findOne({ email: normalizedEmail });
   // Always respond 200 to prevent user enumeration
   if (!user) return res.json({ success: true, message: 'If that email exists, an OTP has been sent.' });
 
@@ -166,7 +215,9 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 ───────────────────────────────────────────────────────────── */
 export const resetPassword = asyncHandler(async (req, res) => {
   const { email, otp, newPassword } = req.body;
-  const user = await User.findOne({ email: email?.toLowerCase() })
+  const normalizedEmail = normalizeEmail(email);
+  validatePassword(newPassword);
+  const user = await User.findOne({ email: normalizedEmail })
     .select('+passwordResetOTP +passwordResetExpires +password');
 
   if (!user || user.passwordResetOTP !== otp || user.passwordResetExpires < new Date()) {

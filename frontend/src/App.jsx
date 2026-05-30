@@ -1,36 +1,55 @@
-import React from 'react';
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './layouts/Navbar';
 import Footer from './layouts/Footer';
-import Home from './pages/Home';
-import AIServicesAutomation from './pages/AIServicesAutomation';
-import ITProductDevelopment from './pages/ITProductDevelopment';
-import ThreeDPrintingSolutions from './pages/ThreeDPrintingSolutions';
-import DigitalTransformation from './pages/DigitalTransformation';
-import AIPoweredManufacturing from './pages/AIPoweredManufacturing';
-import Consultation from './pages/Consultation';
-import EMSLogin from './pages/EMSLogin';
-import EMSSignup from './pages/EMSSignup';
-import Testimonials from './pages/Testimonials';
-import CaseStudies from './pages/CaseStudies';
-import Resources from './pages/Resources';
-import Company from './pages/Company';
-import Team from './pages/Team';
-import Contact from './pages/Contact';
 
 // Dashboard Imports
 import ProtectedRoute from './components/dashboard/ProtectedRoute';
 import DashboardLayout from './layouts/dashboard/DashboardLayout';
-import AdminDashboard from './pages/dashboard/admin/AdminDashboard';
-import EmployeeList from './pages/dashboard/admin/EmployeeList';
-import EmployeeDetail from './pages/dashboard/admin/EmployeeDetail';
-import EmployeeCreate from './pages/dashboard/admin/EmployeeCreate';
-import EmployeeEdit from './pages/dashboard/admin/EmployeeEdit';
-import { AdminProjects, AdminTasks, AdminAnalytics, AdminSettings } from './pages/dashboard/admin/Placeholders';
 
-import EmployeeDashboard from './pages/dashboard/employee/EmployeeDashboard';
-import ProfilePage from './pages/dashboard/employee/ProfilePage';
-import { EmployeeTasks, EmployeeProjects, EmployeeSettings } from './pages/dashboard/employee/Placeholders';
+const Home = lazy(() => import('./pages/Home'));
+const AIServicesAutomation = lazy(() => import('./pages/AIServicesAutomation'));
+const ITProductDevelopment = lazy(() => import('./pages/ITProductDevelopment'));
+const ThreeDPrintingSolutions = lazy(() => import('./pages/ThreeDPrintingSolutions'));
+const DigitalTransformation = lazy(() => import('./pages/DigitalTransformation'));
+const AIPoweredManufacturing = lazy(() => import('./pages/AIPoweredManufacturing'));
+const Consultation = lazy(() => import('./pages/Consultation'));
+const EMSLogin = lazy(() => import('./pages/EMSLogin'));
+const EMSSignup = lazy(() => import('./pages/EMSSignup'));
+const Testimonials = lazy(() => import('./pages/Testimonials'));
+const CaseStudies = lazy(() => import('./pages/CaseStudies'));
+const Resources = lazy(() => import('./pages/Resources'));
+const Company = lazy(() => import('./pages/Company'));
+const Team = lazy(() => import('./pages/Team'));
+const Contact = lazy(() => import('./pages/Contact'));
+
+const AdminDashboard = lazy(() => import('./pages/dashboard/admin/AdminDashboard'));
+const EmployeeList = lazy(() => import('./pages/dashboard/admin/EmployeeList'));
+const EmployeeDetail = lazy(() => import('./pages/dashboard/admin/EmployeeDetail'));
+const EmployeeCreate = lazy(() => import('./pages/dashboard/admin/EmployeeCreate'));
+const EmployeeEdit = lazy(() => import('./pages/dashboard/admin/EmployeeEdit'));
+const AdminAnalytics = lazy(() => import('./pages/dashboard/admin/AdminAnalytics'));
+const AdminProjects = lazy(() => import('./pages/dashboard/admin/AdminProjects'));
+const AdminTasks = lazy(() => import('./pages/dashboard/admin/AdminTasks'));
+const AICopilot = lazy(() => import('./pages/dashboard/admin/AICopilot'));
+const Reports = lazy(() => import('./pages/dashboard/admin/Reports'));
+const Finance = lazy(() => import('./pages/dashboard/admin/Finance'));
+const Security = lazy(() => import('./pages/dashboard/admin/Security'));
+const Messages = lazy(() => import('./pages/dashboard/admin/Messages'));
+const Calendar = lazy(() => import('./pages/dashboard/admin/Calendar'));
+const Integrations = lazy(() => import('./pages/dashboard/admin/Integrations'));
+const AdminSettings = lazy(() => import('./pages/dashboard/admin/Settings'));
+const AdminLeaves = lazy(() => import('./pages/dashboard/admin/AdminLeaves'));
+const Attendance = lazy(() => import('./pages/dashboard/admin/Attendance'));
+
+const EmployeeDashboard = lazy(() => import('./pages/dashboard/employee/EmployeeDashboard'));
+const ProfilePage = lazy(() => import('./pages/dashboard/employee/ProfilePage'));
+const EmployeeTasks = lazy(() => import('./pages/dashboard/employee/EmployeeTasks'));
+const EmployeeProjects = lazy(() => import('./pages/dashboard/employee/EmployeeProjects'));
+const EmployeeLeaves = lazy(() => import('./pages/dashboard/employee/EmployeeLeaves'));
+const EmployeeSettings = lazy(() => import('./pages/dashboard/employee/EmployeeSettings'));
+const PlaceholderPage = lazy(() => import('./pages/dashboard/employee/Placeholders'));
+const EmployeeMessages = lazy(() => import('./pages/dashboard/employee/EmployeeMessages'));
 
 // Routes where the site Navbar + Footer are hidden (standalone fullscreen pages)
 const HIDDEN_CHROME_ROUTES = ['/ems-login', '/ems-signup'];
@@ -73,17 +92,38 @@ function Layout() {
                 <Route path="projects" element={<AdminProjects />} />
                 <Route path="tasks" element={<AdminTasks />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
+                <Route path="ai" element={<AICopilot />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="finance" element={<Finance />} />
+                <Route path="security" element={<Security />} />
+                <Route path="messages" element={<Messages />} />
+                <Route path="calendar" element={<Calendar />} />
+                <Route path="integrations" element={<Integrations />} />
+                <Route path="leaves" element={<AdminLeaves />} />
+                <Route path="attendance" element={<Attendance />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
             </Route>
               
-            {/* Employee Routes - Uses its own internal layout */}
+            {/* Employee Routes - Uses standard DashboardLayout */}
             <Route path="employee" element={<ProtectedRoute allowedRoles={['employee']} />}>
-              <Route index element={<EmployeeDashboard />} />
-              <Route path="tasks" element={<EmployeeTasks />} />
-              <Route path="projects" element={<EmployeeProjects />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="settings" element={<EmployeeSettings />} />
+              <Route element={<DashboardLayout />}>
+                <Route index element={<EmployeeDashboard />} />
+                <Route path="tasks" element={<EmployeeTasks />} />
+                <Route path="projects" element={<EmployeeProjects />} />
+                <Route path="leaves" element={<EmployeeLeaves />} />
+                <Route path="attendance" element={<Attendance />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="settings" element={<EmployeeSettings />} />
+                <Route path="messages" element={<EmployeeMessages />} />
+                <Route path="timesheets" element={<PlaceholderPage title="Timesheets" description="Daily work logs, submitted hours, and approval history." />} />
+                <Route path="performance" element={<PlaceholderPage title="My Performance" description="Completion trends, productivity insights, goals, and recognition." />} />
+                <Route path="salary" element={<PlaceholderPage title="My Salary" description="Payslips, salary structure, reimbursements, and payroll status." />} />
+                <Route path="expenses" element={<PlaceholderPage title="Expenses" description="Reimbursement claims, uploaded bills, and approval progress." />} />
+                <Route path="announcements" element={<PlaceholderPage title="Announcements" description="Company updates, HR notices, and policy broadcasts." />} />
+                <Route path="meetings" element={<PlaceholderPage title="Meetings" description="Today's calls, upcoming reviews, and meeting links." />} />
+                <Route path="notifications" element={<PlaceholderPage title="Notifications" description="Unread alerts, approvals, task updates, and system messages." />} />
+              </Route>
             </Route>
           </Route>
         </Routes>
@@ -93,10 +133,16 @@ function Layout() {
   );
 }
 
+function RouteFallback() {
+  return <div className="min-h-[50vh]" aria-busy="true" />;
+}
+
 function App() {
   return (
     <Router>
-      <Layout />
+      <Suspense fallback={<RouteFallback />}>
+        <Layout />
+      </Suspense>
     </Router>
   );
 }

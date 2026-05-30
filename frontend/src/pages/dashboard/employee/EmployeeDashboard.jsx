@@ -1,482 +1,724 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
-  CheckSquare, MoreHorizontal, ArrowUpRight, ArrowDownRight,
-  Activity, CheckCircle2, Calendar, LayoutDashboard, ListTodo,
-  FolderOpen, UserCircle, Settings, LogOut, Bell, Search,
-  TrendingUp, Award, Clock, Zap, Target, ChevronRight,
-  Star, Coffee, Briefcase
+  AlertCircle,
+  Award,
+  BarChart3,
+  CheckSquare,
+  ChevronRight,
+  Clock,
+  Download,
+  FileUp,
+  Flame,
+  FolderOpen,
+  MessageSquare,
+  Plane,
+  Play,
+  Send,
+  Sparkles,
+  SquarePen,
+  Target,
+  TimerReset,
+  Zap,
 } from "lucide-react";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Area, AreaChart
+  Area,
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
+import api from "../../../services/api";
+import {
+  badgeBounce,
+  cardVariants,
+  clockPulse,
+  containerVariants,
+  hoverLift,
+  pageVariants,
+  progressFill,
+  staggerItem,
+  streakPulse,
+  tapFeedback,
+  useCountUp,
+} from "../../../lib/motion";
+import { mergeDashboardData } from "./employeeWorkspaceData";
 
-// â”€â”€ DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const performanceData = [
-  { name: "Q1", thisYear: 85, lastYear: 70 },
-  { name: "Q2", thisYear: 90, lastYear: 65 },
-  { name: "Q3", thisYear: 78, lastYear: 80 },
-  { name: "Q4", thisYear: 95, lastYear: 85 },
-];
-
-const weeklyActivity = [
-  { day: "Mon", tasks: 12, hours: 7.5 },
-  { day: "Tue", tasks: 18, hours: 8.2 },
-  { day: "Wed", tasks: 9, hours: 6.8 },
-  { day: "Thu", tasks: 22, hours: 9.1 },
-  { day: "Fri", tasks: 15, hours: 7.3 },
-  { day: "Sat", tasks: 5, hours: 3.0 },
-  { day: "Sun", tasks: 2, hours: 1.5 },
-];
-
-const teamData = [
-  { id: 1, name: "Alice Freeman", role: "Senior UX Designer", score: 98, delta: 5, last: 93, avatar: "AF", color: "#1D4ED8" },
-  { id: 2, name: "Marcus Johnson", role: "Frontend Lead", score: 92, delta: 2, last: 90, avatar: "MJ", color: "#0ea5e9" },
-  { id: 3, name: "Sarah Chen", role: "Product Manager", score: 88, delta: -3, last: 91, avatar: "SC", color: "#f59e0b" },
-  { id: 4, name: "David Lopez", role: "Backend Developer", score: 95, delta: 4, last: 91, avatar: "DL", color: "#10b981" },
-  { id: 5, name: "Priya Menon", role: "Data Analyst", score: 91, delta: 6, last: 85, avatar: "PM", color: "#ec4899" },
-];
-
-const expensesData = [
-  { category: "Software & Tools", amount: 1250, percent: 62, color: "#2563EB" },
-  { category: "Equipment", amount: 450, percent: 22, color: "#10b981" },
-  { category: "Travel & Allowances", amount: 200, percent: 10, color: "#f59e0b" },
-  { category: "Training & Dev", amount: 120, percent: 6, color: "#a855f7" },
-];
-
-const recentTasks = [
-  { id: 1, title: "Redesign onboarding flow", due: "Today", status: "in-progress", priority: "high" },
-  { id: 2, title: "Q4 performance review draft", due: "Tomorrow", status: "pending", priority: "medium" },
-  { id: 3, title: "Update component library", due: "May 20", status: "completed", priority: "low" },
-  { id: 4, title: "Stakeholder presentation", due: "May 22", status: "pending", priority: "high" },
-];
-
-const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", active: true },
-  { icon: ListTodo, label: "My Tasks" },
-  { icon: FolderOpen, label: "Projects" },
-  { icon: UserCircle, label: "Profile" },
-  { icon: Settings, label: "Settings" },
-];
-
-const tabs = ["Dashboard", "Leave", "Attendance", "Performance"];
-
-const PIE_COLORS = ["#2563EB", "#EEF2FF"];
-
-// â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const Avatar = ({ initials, color, size = 36 }) => (
-  <div style={{
-    width: size, height: size, borderRadius: "50%",
-    background: `linear-gradient(135deg, ${color}cc, ${color})`,
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: size * 0.33, fontWeight: 700, color: "#fff",
-    flexShrink: 0, boxShadow: `0 2px 8px ${color}44`
-  }}>{initials}</div>
-);
-
-const Badge = ({ label, color }) => (
-  <span style={{
-    fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 99,
-    background: color + "18", color, border: `1px solid ${color}30`,
-    textTransform: "uppercase", letterSpacing: 0.4
-  }}>{label}</span>
-);
-
-const statusMap = {
-  "in-progress": { color: "#2563EB", label: "In Progress" },
-  "pending": { color: "#f59e0b", label: "Pending" },
-  "completed": { color: "#10b981", label: "Done" },
-};
-const priorityMap = {
+const completedStatuses = ["done", "completed"];
+const priorityColor = {
+  critical: "#dc2626",
   high: "#ef4444",
   medium: "#f59e0b",
   low: "#10b981",
 };
+const statusLabels = {
+  todo: "Todo",
+  in_progress: "In Progress",
+  review: "Review",
+  done: "Done",
+  completed: "Done",
+  blocked: "Blocked",
+};
+const insightIcons = { AlertTriangle: AlertCircle, Target, Zap, Clock };
 
-// â”€â”€ CARD WRAPPER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const Card = ({ children, style = {}, className = "" }) => (
-  <div style={{
-    background: "#fff",
-    borderRadius: 20,
-    border: "1px solid #eef2f7",
-    boxShadow: "0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04)",
-    padding: "22px 24px",
-    ...style
-  }} className={className}>{children}</div>
+const formatMinutes = (minutes = 0) => {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (!h) return `${m}m`;
+  return `${h}h ${m}m`;
+};
+
+const initials = (name = "Employee") =>
+  name.split(" ").map(part => part[0]).join("").slice(0, 2).toUpperCase();
+
+const formatDate = (date) =>
+  new Date(date).toLocaleDateString("en-IN", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+
+const dueLabel = (date) => {
+  if (!date) return "No due date";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(date);
+  due.setHours(0, 0, 0, 0);
+  const diff = Math.round((due - today) / 86400000);
+  if (diff < 0) return "Overdue";
+  if (diff === 0) return "Today";
+  if (diff === 1) return "Tomorrow";
+  return `In ${diff} days`;
+};
+
+const Card = ({ children, className = "", hover = true, ...props }) => (
+  <motion.section
+    variants={cardVariants}
+    {...(hover ? hoverLift : {})}
+    className={`dashboard-card h-full ${className}`}
+    {...props}
+  >
+    {children}
+  </motion.section>
 );
 
-const SectionTitle = ({ title, sub, action, actionLabel = "View All" }) => (
-  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-    <div>
-      <p style={{ fontWeight: 700, fontSize: 16, color: "#0f172a", margin: 0 }}>{title}</p>
-      {sub && <p style={{ fontSize: 12, color: "#94a3b8", marginTop: 3 }}>{sub}</p>}
+const Header = ({ title, subtitle, action, onAction }) => (
+  <div className="mb-4 flex items-start justify-between gap-3">
+    <div className="min-w-0">
+      <h2 className="truncate text-[16px] font-bold text-slate-950 dark:text-[#f8fafc]">{title}</h2>
+      {subtitle && <p className="mt-0.5 text-xs text-slate-500 dark:text-[#94a3b8]">{subtitle}</p>}
     </div>
     {action && (
-      <button onClick={action} style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 2 }}>
-        {actionLabel} <ChevronRight size={13} />
-      </button>
+      <motion.button
+        {...tapFeedback}
+        onClick={onAction}
+        className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-blue-600 dark:text-blue-400"
+      >
+        {action} <ChevronRight size={13} />
+      </motion.button>
     )}
   </div>
 );
 
-// â”€â”€ KPI CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const KPICard = ({ title, value, subtext, icon: Icon, trend, color, delay = 0 }) => (
-  <Card style={{ padding: "20px 22px", cursor: "default", transition: "transform 0.2s, box-shadow 0.2s", animationDelay: `${delay}ms` }}
-    className="kpi-hover">
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-      <div style={{ width: 40, height: 40, borderRadius: 12, background: color + "14", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Icon size={19} color={color} />
-      </div>
-      <button style={{ background: "none", border: "none", cursor: "pointer", color: "#cbd5e1" }}><MoreHorizontal size={16} /></button>
-    </div>
-    <div style={{ fontSize: 28, fontWeight: 800, color: "#0f172a", letterSpacing: -0.5, lineHeight: 1 }}>{value}</div>
-    <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 4, marginBottom: 10 }}>{title}</div>
-    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <span style={{
-        display: "flex", alignItems: "center", gap: 2, fontSize: 11, fontWeight: 700,
-        padding: "3px 7px", borderRadius: 6,
-        color: trend > 0 ? "#059669" : trend < 0 ? "#dc2626" : "#64748b",
-        background: trend > 0 ? "#d1fae5" : trend < 0 ? "#fee2e2" : "#f1f5f9"
-      }}>
-        {trend > 0 ? <ArrowUpRight size={11} /> : trend < 0 ? <ArrowDownRight size={11} /> : null}
-        {Math.abs(trend)}%
-      </span>
-      <span style={{ fontSize: 11, color: "#94a3b8" }}>{subtext}</span>
-    </div>
-  </Card>
+const Skeleton = ({ className = "" }) => (
+  <div className={`animate-pulse rounded-xl bg-slate-200/70 dark:bg-white/[0.05] ${className}`} />
 );
 
-// â”€â”€ MAIN COMPONENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-export default function EmployeeDashboard() {
-  const [activeTab, setActiveTab] = useState("Performance");
-  const [activeNav, setActiveNav] = useState("Dashboard");
+const DashboardSkeleton = () => (
+  <div className="space-y-5">
+    <Skeleton className="h-28" />
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-[140px]" />)}
+    </div>
+    <div className="grid grid-cols-1 gap-5 xl:grid-cols-5">
+      <Skeleton className="h-80 xl:col-span-3" />
+      <Skeleton className="h-80 xl:col-span-2" />
+    </div>
+  </div>
+);
+
+const ProgressBar = ({ pct, color = "#2563eb", className = "" }) => (
+  <div className={`h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/[0.06] ${className}`}>
+    <motion.div className="h-full rounded-full" style={{ backgroundColor: color }} {...progressFill(Math.min(100, Math.max(0, pct || 0)))} />
+  </div>
+);
+
+const CountNumber = ({ value, suffix = "" }) => {
+  const counted = useCountUp(value || 0, 1200);
+  return <>{counted}{suffix}</>;
+};
+
+const AvatarStack = ({ people = [], max = 4 }) => {
+  const visible = people.slice(0, max);
+  return (
+    <div className="flex -space-x-2">
+      {visible.map(person => (
+        <div
+          key={person._id || person.fullName}
+          className="grid h-7 w-7 place-items-center rounded-full bg-blue-600 text-[10px] font-black text-white ring-2 ring-white dark:ring-[#111827]"
+          title={person.fullName}
+        >
+          {initials(person.fullName)}
+        </div>
+      ))}
+      {people.length > max && (
+        <div className="grid h-7 w-7 place-items-center rounded-full bg-slate-200 text-[10px] font-black text-slate-600 ring-2 ring-white dark:bg-white/[0.08] dark:text-slate-300 dark:ring-[#111827]">
+          +{people.length - max}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const getKpiColorStyles = (color) => {
+  if (color === "#2563eb") {
+    return { bg: "rgba(26, 86, 219, 0.08)", text: "text-blue-600 dark:text-blue-400" };
+  }
+  if (color === "#8b5cf6") {
+    return { bg: "rgba(124, 58, 237, 0.08)", text: "text-purple-600 dark:text-purple-400" };
+  }
+  if (color === "#f59e0b") {
+    return { bg: "rgba(245, 158, 11, 0.08)", text: "text-amber-600 dark:text-amber-500" };
+  }
+  return { bg: `${color}14`, text: "" };
+};
+
+const KpiCard = ({ icon: Icon, title, value, suffix, sub, pct, color, children }) => {
+  const styles = getKpiColorStyles(color);
+  const bgStyle = styles.bg.startsWith("rgba") ? { backgroundColor: styles.bg } : {};
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#f6f8fc", fontFamily: "'DM Sans', 'Segoe UI', sans-serif", fontSize: 14 }}>
+    <motion.div variants={cardVariants} className="kpi-card flex flex-col justify-between h-full min-h-[140px]">
+      <div className="flex items-start justify-between">
+        <span className="kpi-label">{title}</span>
+        <div className={`kpi-icon ${styles.text}`} style={bgStyle}>
+          <Icon size={15} />
+        </div>
+      </div>
 
-      {/* â”€â”€ SIDEBAR â”€â”€ */}
-      <aside style={{
-        width: 220, flexShrink: 0, background: "#fff",
-        borderRight: "1px solid #eef2f7",
-        boxShadow: "2px 0 12px rgba(15,23,42,0.04)",
-        display: "flex", flexDirection: "column", padding: "0 0 20px"
-      }}>
-        {/* Logo */}
-        <div style={{ padding: "24px 22px 20px", borderBottom: "1px solid #f1f5f9" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 10, background: "linear-gradient(135deg,#2563EB,#1D4ED8)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "#fff", fontSize: 14, fontWeight: 800 }}>A</span>
+      <div className="kpi-number mt-2">
+        <CountNumber value={value} suffix={suffix} />
+      </div>
+
+      {children && <div className="mt-2 shrink-0">{children}</div>}
+
+      <div className="mt-auto pt-2">
+        <p className="mb-1.5 text-[11px] font-semibold text-slate-500 dark:text-[#94a3b8]">{sub}</p>
+        <ProgressBar pct={pct} color={color} />
+      </div>
+    </motion.div>
+  );
+};
+
+const ClockCard = ({ attendance, onToggle }) => {
+  const isIn = Boolean(attendance?.clockedIn);
+  return (
+    <motion.div variants={cardVariants} className="kpi-card flex flex-col items-center justify-center gap-3 text-center h-full min-h-[140px]">
+      <motion.button
+        {...tapFeedback}
+        {...(isIn ? clockPulse : {})}
+        onClick={onToggle}
+        className={`grid h-16 w-16 place-items-center rounded-full text-white shadow-lg ${isIn ? "bg-rose-500 shadow-rose-500/25" : "bg-emerald-500 shadow-emerald-500/25"}`}
+      >
+        {isIn ? <TimerReset size={24} /> : <Play size={24} fill="currentColor" className="ml-1" />}
+        <span className="sr-only">{isIn ? "Clock Out" : "Clock In"}</span>
+      </motion.button>
+      <div>
+        <p className="text-sm font-black text-slate-950 dark:text-white">{isIn ? "Clock Out" : "Clock In"}</p>
+        <p className="mt-1 text-xs text-slate-500 dark:text-[#94a3b8] leading-tight">
+          {isIn && attendance.loginTime
+            ? `Since ${new Date(attendance.loginTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true })}`
+            : "Ready for today's session"}
+        </p>
+      </div>
+    </motion.div>
+  );
+};
+
+const FocusRing = ({ value }) => {
+  const radius = 52;
+  const circumference = 2 * Math.PI * radius;
+  return (
+    <div className="relative grid h-32 w-32 shrink-0 place-items-center">
+      <svg className="h-32 w-32 -rotate-90" viewBox="0 0 132 132">
+        <circle cx="66" cy="66" r={radius} stroke="currentColor" strokeWidth="10" fill="none" className="text-slate-100 dark:text-white/[0.06]" />
+        <motion.circle
+          cx="66"
+          cy="66"
+          r={radius}
+          stroke="#2563eb"
+          strokeWidth="10"
+          strokeLinecap="round"
+          fill="none"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: circumference - (circumference * value) / 100 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="absolute text-center">
+        <div className="text-2xl font-black text-slate-950 dark:text-white"><CountNumber value={value} suffix="%" /></div>
+        <div className="text-[10px] font-bold uppercase text-slate-400">Done</div>
+      </div>
+    </div>
+  );
+};
+
+export default function EmployeeDashboard() {
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [updatingTask, setUpdatingTask] = useState("");
+  const [chartRange, setChartRange] = useState("This Week");
+
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await api.get("/dashboard/employee-overview");
+      if (res.data.success) setData(mergeDashboardData(res.data));
+    } catch (err) {
+      setData(mergeDashboardData());
+      setError(err?.response?.data?.message || "Failed to load employee dashboard.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    queueMicrotask(fetchDashboardData);
+  }, []);
+
+  const profile = data?.profile || {};
+  const tasks = data?.tasks || [];
+  const todayTasks = data?.todayTasks?.length ? data.todayTasks : (data?.openTasks || tasks).slice(0, 5);
+  const projects = data?.projects || [];
+  const attendance = data?.attendance || { clockedIn: false, streak: 0 };
+  const performance = data?.performance || {};
+  const leaveBalance = data?.leaveBalance || { remaining: 0, sick: 0, casual: 0, earned: 0, used: 0, total: 1 };
+  const completed = tasks.filter(task => completedStatuses.includes(task.status)).length;
+  const completionRate = performance.taskCompletionRate ?? (tasks.length ? Math.round((completed / tasks.length) * 100) : 0);
+  const openTasks = tasks.filter(task => !completedStatuses.includes(task.status));
+  const pendingLeaves = (data?.leaves || []).filter(leave => leave.status === "pending");
+
+  const firstName = (profile.fullName || "Prasanna").split(" ")[0];
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+  const insightText = useMemo(() => {
+    const overdue = openTasks.filter(task => task.dueDate && dueLabel(task.dueDate) === "Overdue").length;
+    if (overdue) return `${overdue} tasks are overdue - review now`;
+    if (attendance.streak >= 5) return `${attendance.streak}-day attendance streak - keep it up`;
+    return `You completed ${completionRate}% of sprint goals this week`;
+  }, [attendance.streak, completionRate, openTasks]);
+
+  const handleClockToggle = async () => {
+    try {
+      if (attendance.clockedIn) {
+        await api.put("/attendance/clock-out");
+      } else {
+        await api.post("/attendance/clock-in");
+      }
+      window.dispatchEvent(new Event("ems:attendance-updated"));
+      fetchDashboardData();
+    } catch (err) {
+      setError(err?.response?.data?.message || "Could not update attendance.");
+    }
+  };
+
+  const handleTaskStatus = async (taskId, status) => {
+    setUpdatingTask(taskId);
+    try {
+      if (String(taskId).startsWith("demo-")) {
+        setData(prev => ({
+          ...prev,
+          tasks: (prev.tasks || []).map(task => task._id === taskId ? { ...task, status } : task),
+          todayTasks: (prev.todayTasks || []).map(task => task._id === taskId ? { ...task, status } : task),
+        }));
+        return;
+      }
+      const res = await api.put(`/tasks/${taskId}`, { status });
+      const updated = res.data.task;
+      setData(prev => ({
+        ...prev,
+        tasks: (prev.tasks || []).map(task => task._id === taskId ? updated : task),
+        todayTasks: (prev.todayTasks || []).map(task => task._id === taskId ? updated : task),
+      }));
+    } catch (err) {
+      setError(err?.response?.data?.message || "Could not update task status.");
+    } finally {
+      setUpdatingTask("");
+    }
+  };
+
+  const handleChartRange = async (range) => {
+    setChartRange(range);
+    try {
+      const res = await api.get("/analytics/my-weekly", {
+        params: { range: range.toLowerCase().replaceAll(" ", "-") },
+      });
+      if (res.data.success) {
+        setData(prev => ({
+          ...prev,
+          weeklyActivity: res.data.data,
+          performance: {
+            ...(prev?.performance || {}),
+            workedThisWeek: res.data.summary?.workedHours ?? prev?.performance?.workedThisWeek,
+            tasksCompletedThisWeek: res.data.summary?.completedTasks ?? prev?.performance?.tasksCompletedThisWeek,
+          },
+        }));
+      }
+    } catch {
+      // The overview payload already includes chart data; keep it if the tab endpoint is unavailable.
+    }
+  };
+
+  const handleQuickAction = (key) => {
+    if (key === "clock") return handleClockToggle();
+    if (key === "leave") return navigate("/dashboard/employee/leaves");
+    if (key === "upload") return fileInputRef.current?.click();
+    if (key === "task") return navigate("/dashboard/employee/tasks");
+    if (key === "message") return navigate("/dashboard/employee/messages");
+    if (key === "payslip") return navigate("/dashboard/employee/salary");
+    return null;
+  };
+
+  const quickActions = [
+    { key: "clock", icon: TimerReset, label: attendance.clockedIn ? "Clock Out" : "Clock In" },
+    { key: "leave", icon: Plane, label: "Request Leave" },
+    { key: "upload", icon: FileUp, label: "Upload File" },
+    { key: "task", icon: SquarePen, label: "Update Task" },
+    { key: "message", icon: Send, label: "Message Team" },
+    { key: "payslip", icon: Download, label: "View Payslip" },
+  ];
+
+  if (loading) return <DashboardSkeleton />;
+
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={pageVariants.transition}
+      className="dash-page flex flex-col gap-6 md:gap-8 text-slate-950 dark:text-[#f8fafc]"
+    >
+      {error && (
+        <div className="flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm font-semibold text-rose-600 dark:text-rose-300">
+          <AlertCircle size={18} /> {error}
+        </div>
+      )}
+
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-6 md:gap-8">
+        
+        {/* ── SECTION 1: PAGE HEADER ── */}
+        <motion.div variants={cardVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-[11px] font-bold tracking-wider text-gray-400 dark:text-slate-500 uppercase">AECCENTRIC EMS</span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/[0.1] border border-blue-100 dark:border-blue-500/20 text-[10px] font-bold text-blue-600 dark:text-blue-400">
+                <Sparkles size={9} />
+                Employee Workspace
+              </span>
             </div>
-            <div>
-              <p style={{ fontWeight: 800, fontSize: 14, color: "#0f172a", margin: 0, letterSpacing: -0.3 }}>AECCENTRIC</p>
-              <p style={{ fontSize: 10, color: "#94a3b8", margin: 0, textTransform: "uppercase", letterSpacing: 0.8 }}>Employee Portal</p>
-            </div>
+            <h1 className="text-[32px] font-bold tracking-tight text-gray-950 dark:text-white leading-none">
+              {greeting}, {firstName}
+            </h1>
+            <p className="text-[13px] text-gray-500 dark:text-slate-405 mt-2 font-normal">
+              Welcome back to your workstation. {insightText}.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0">
+            <span className="text-xs text-slate-450 dark:text-slate-500 font-semibold">{formatDate(new Date())}</span>
+            {attendance.clockedIn && (
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/25 text-[11px] font-black text-emerald-600 dark:text-emerald-400 animate-pulse">
+                ● Active Work Session
+              </span>
+            )}
+          </div>
+        </motion.div>
+
+        {/* ── ZONE 1: KPI STRIP ── */}
+        <div>
+          <div className="zone-label mb-3">Zone 1: Key Workspace Metrics</div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <ClockCard attendance={attendance} onToggle={handleClockToggle} />
+            <KpiCard icon={CheckSquare} title="Tasks Today" value={todayTasks.length} sub={`${completed} completed · ${openTasks.length} remaining`} pct={tasks.length ? (completed / tasks.length) * 100 : 0} color="#2563eb" />
+            <KpiCard icon={BarChart3} title="Completion Rate" value={completionRate} suffix="%" sub="This month vs last month" pct={completionRate} color="#8b5cf6" />
+            <KpiCard icon={FolderOpen} title="Active Projects" value={projects.length} sub={`${openTasks.length} tasks across ${projects.length} projects`} pct={projects.length ? Math.round(projects.reduce((sum, p) => sum + (p.progress || 0), 0) / projects.length) : 0} color="#f59e0b">
+              <AvatarStack people={projects.flatMap(p => p.members || []).slice(0, 4)} />
+            </KpiCard>
           </div>
         </div>
 
-        {/* Nav */}
-        <nav style={{ padding: "16px 12px", flex: 1 }}>
-          <p style={{ fontSize: 10, fontWeight: 600, color: "#cbd5e1", textTransform: "uppercase", letterSpacing: 1, padding: "0 10px", marginBottom: 8 }}>Menu</p>
-          {navItems.map(({ icon: Icon, label }) => {
-            const active = activeNav === label;
-            return (
-              <button key={label} onClick={() => setActiveNav(label)} style={{
-                display: "flex", alignItems: "center", gap: 10, width: "100%",
-                padding: "9px 12px", borderRadius: 10, border: "none", cursor: "pointer",
-                background: active ? "#eff4ff" : "transparent",
-                color: active ? "#2563EB" : "#64748b",
-                fontWeight: active ? 700 : 500, fontSize: 13.5,
-                marginBottom: 2, transition: "all 0.15s"
-              }}>
-                <Icon size={17} />
-                {label}
-                {active && <span style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: "#2563EB" }} />}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* User */}
-        <div style={{ margin: "0 12px", padding: "14px", borderRadius: 12, background: "#f8fafc", border: "1px solid #e2e8f0" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Avatar initials="US" color="#2563EB" size={34} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontWeight: 700, fontSize: 12, color: "#0f172a", margin: 0 }}>User Smith</p>
-              <p style={{ fontSize: 11, color: "#94a3b8", margin: 0 }}>Sr. Designer</p>
-            </div>
-          </div>
-        </div>
-
-        <button style={{ display: "flex", alignItems: "center", gap: 8, margin: "10px 12px 0", padding: "9px 12px", borderRadius: 10, border: "none", cursor: "pointer", background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 13 }}>
-          <LogOut size={15} /> Logout
-        </button>
-      </aside>
-
-      {/* â”€â”€ CONTENT â”€â”€ */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-
-        {/* â”€â”€ TOPBAR â”€â”€ */}
-        <header style={{
-          background: "#fff", borderBottom: "1px solid #eef2f7",
-          padding: "0 28px", height: 64,
-          display: "flex", alignItems: "center", gap: 16, flexShrink: 0
-        }}>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontWeight: 700, fontSize: 18, color: "#0f172a", margin: 0, letterSpacing: -0.3 }}>Overview</p>
-          </div>
-          {/* Search */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#f6f8fc", border: "1px solid #e2e8f0", borderRadius: 10, padding: "7px 14px", width: 210 }}>
-            <Search size={14} color="#94a3b8" />
-            <input placeholder="Searchâ€¦" style={{ border: "none", background: "transparent", outline: "none", fontSize: 13, color: "#0f172a", width: "100%" }} />
-          </div>
-          {/* Bell */}
-          <div style={{ position: "relative", cursor: "pointer" }}>
-            <div style={{ width: 38, height: 38, borderRadius: 10, border: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", background: "#fff" }}>
-              <Bell size={17} color="#64748b" />
-            </div>
-            <span style={{ position: "absolute", top: 7, right: 8, width: 8, height: 8, borderRadius: "50%", background: "#ef4444", border: "2px solid #fff" }} />
-          </div>
-          {/* Avatar */}
-          <Avatar initials="US" color="#2563EB" size={38} />
-        </header>
-
-        {/* â”€â”€ SCROLLABLE BODY â”€â”€ */}
-        <main style={{ flex: 1, overflowY: "auto", padding: "28px 28px 32px" }}>
-
-          {/* TABS */}
-          <div style={{ display: "flex", alignItems: "center", gap: 4, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 14, padding: 5, width: "fit-content", marginBottom: 28, boxShadow: "0 1px 4px rgba(15,23,42,0.06)" }}>
-            {tabs.map(tab => {
-              const active = activeTab === tab;
-              return (
-                <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                  padding: "8px 20px", borderRadius: 10, border: "none", cursor: "pointer",
-                  fontSize: 13.5, fontWeight: active ? 700 : 500,
-                  background: active ? "#2563EB" : "transparent",
-                  color: active ? "#fff" : "#64748b",
-                  boxShadow: active ? "0 4px 12px rgba(37,99,235,0.28)" : "none",
-                  transition: "all 0.2s"
-                }}>{tab}</button>
-              );
-            })}
-          </div>
-
-          {/* KPI GRID â€” 5 columns */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16, marginBottom: 24 }}>
-
-            {/* My Performance donut */}
-            <Card style={{ padding: "20px 18px", textAlign: "center" }}>
-              <p style={{ fontWeight: 700, fontSize: 13.5, color: "#0f172a", marginBottom: 12, textAlign: "left" }}>My Performance</p>
-              <div style={{ position: "relative", height: 110, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={[{ value: 84.34 }, { value: 15.66 }]} innerRadius={36} outerRadius={50}
-                      dataKey="value" stroke="none" cornerRadius={6} startAngle={90} endAngle={-270}>
-                      <Cell fill="#2563EB" />
-                      <Cell fill="#EEF2FF" />
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-                <div style={{ position: "absolute", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <span style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", lineHeight: 1 }}>84%</span>
-                  <span style={{ fontSize: 9, color: "#94a3b8" }}>score</span>
+        {/* ── ZONE 2: DAILY FOCUS & SYNCS ── */}
+        <div>
+          <div className="zone-label mb-3">Zone 2: Daily Focus & Syncs</div>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-5">
+            <Card className="xl:col-span-3">
+              <Header title="Today's Focus" subtitle="Sprint 4 · active deliverables" action="View All" onAction={() => navigate("/dashboard/employee/tasks")} />
+              <div className="grid gap-5 lg:grid-cols-[140px_1fr]">
+                <FocusRing value={completionRate} />
+                <div className="space-y-3">
+                  {todayTasks.slice(0, 5).map((task, index) => (
+                    <motion.div
+                      key={task._id}
+                      {...staggerItem(index)}
+                      className={`grid gap-3 rounded-xl border border-slate-100 bg-slate-50/70 p-3 dark:border-white/[0.05] dark:bg-white/[0.03] md:grid-cols-[1fr_auto] ${completedStatuses.includes(task.status) ? "opacity-55" : ""}`}
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: priorityColor[task.priority] || "#64748b" }} />
+                          <p className={`truncate text-sm font-bold text-slate-900 dark:text-white ${completedStatuses.includes(task.status) ? "line-through" : ""}`}>{task.title}</p>
+                        </div>
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-500 dark:text-[#94a3b8]">
+                          <span className="rounded-full bg-blue-50 px-2 py-1 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300">{task.project?.name || "General"}</span>
+                          <span className={dueLabel(task.dueDate) === "Overdue" ? "text-rose-500" : ""}>{dueLabel(task.dueDate)}</span>
+                        </div>
+                      </div>
+                      <select
+                        value={task.status}
+                        disabled={updatingTask === task._id}
+                        onChange={(e) => handleTaskStatus(task._id, e.target.value)}
+                        className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 dark:border-white/[0.08] dark:bg-[#0d1526] dark:text-slate-200"
+                      >
+                        <option value="todo">Todo</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="review">Review</option>
+                        <option value="done">Done</option>
+                      </select>
+                    </motion.div>
+                  ))}
+                  {todayTasks.length === 0 && (
+                    <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-sm font-semibold text-slate-500 dark:border-white/[0.08] dark:text-slate-400">
+                      No tasks due today.
+                    </div>
+                  )}
                 </div>
               </div>
-              <p style={{ fontSize: 11, color: "#10b981", fontWeight: 700, marginTop: 6 }}>âœ¦ Excellent standing</p>
             </Card>
 
-            <KPICard title="Tasks Assigned" value="189" subtext="vs last month" trend={12.5} icon={CheckSquare} color="#2563EB" delay={50} />
-            <KPICard title="Task Completion" value="98.5%" subtext="vs last month" trend={4.2} icon={CheckCircle2} color="#10b981" delay={100} />
-            <KPICard title="Attendance Rate" value="89.8%" subtext="vs last month" trend={-2.1} icon={Calendar} color="#f59e0b" delay={150} />
-            <KPICard title="Leaves Taken" value="04" subtext="total this year" trend={0} icon={Activity} color="#a855f7" delay={200} />
-          </div>
-
-          {/* MAIN 3-COL GRID */}
-          <div style={{ display: "grid", gridTemplateColumns: "5fr 4fr 3fr", gap: 20, marginBottom: 20 }}>
-
-            {/* MY TEAM */}
-            <Card style={{ padding: "22px 24px" }}>
-              <SectionTitle title="My Team" sub="Performance overview for direct reports" action={() => { }} />
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr>
-                    {["Team Member", "Score", "This Month", "Last Month"].map(h => (
-                      <th key={h} style={{ textAlign: h === "Team Member" ? "left" : "center", fontSize: 10.5, color: "#94a3b8", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.6, paddingBottom: 12, borderBottom: "1px solid #f1f5f9" }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {teamData.map(m => (
-                    <tr key={m.id} style={{ borderBottom: "1px solid #f8fafc", cursor: "pointer" }}>
-                      <td style={{ padding: "12px 0" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <Avatar initials={m.avatar} color={m.color} size={34} />
-                          <div>
-                            <p style={{ fontWeight: 700, fontSize: 13, color: "#0f172a", margin: 0 }}>{m.name}</p>
-                            <p style={{ fontSize: 11, color: "#94a3b8", margin: 0 }}>{m.role}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{ textAlign: "center" }}>
-                        <span style={{
-                          padding: "3px 10px", borderRadius: 99, fontSize: 12, fontWeight: 700,
-                          background: m.score >= 90 ? "#d1fae5" : m.score >= 80 ? "#eff4ff" : "#fef3c7",
-                          color: m.score >= 90 ? "#059669" : m.score >= 80 ? "#2563EB" : "#d97706"
-                        }}>{m.score}%</span>
-                      </td>
-                      <td style={{ textAlign: "center" }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: m.delta > 0 ? "#059669" : "#dc2626" }}>
-                          {m.delta > 0 ? "+" : ""}{m.delta}%
-                        </span>
-                      </td>
-                      <td style={{ textAlign: "center", fontSize: 13, color: "#64748b", fontWeight: 600 }}>{m.last}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Card>
-
-            {/* PERFORMANCE BAR CHART */}
-            <Card style={{ padding: "22px 24px" }}>
-              <SectionTitle title="Performance" sub="Year over year comparison" />
-              <div style={{ display: "flex", gap: 16, marginBottom: 16, fontSize: 11, color: "#64748b" }}>
-                <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "#2563EB", display: "inline-block" }} /> This Year</span>
-                <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "#e2e8f0", display: "inline-block" }} /> Last Year</span>
-              </div>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={performanceData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12 }} dy={8} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} />
-                  <Tooltip
-                    cursor={{ fill: "#f8fafc" }}
-                    contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, fontSize: 12, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
-                  />
-                  <Bar dataKey="thisYear" fill="#2563EB" radius={[5, 5, 0, 0]} barSize={14} />
-                  <Bar dataKey="lastYear" fill="#e2e8f0" radius={[5, 5, 0, 0]} barSize={14} />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-
-            {/* BUDGET & EXPENSES */}
-            <Card style={{ padding: "22px 22px", display: "flex", flexDirection: "column" }}>
-              <SectionTitle title="Budget & Expenses" />
-              <div style={{ marginBottom: 18 }}>
-                <p style={{ fontSize: 11, color: "#94a3b8", margin: 0 }}>Total Spent (YTD)</p>
-                <p style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", margin: "4px 0 0", letterSpacing: -0.5 }}>$1,900<span style={{ fontSize: 15, color: "#94a3b8", fontWeight: 600 }}>.00</span></p>
-              </div>
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 14 }}>
-                {expensesData.map((item, i) => (
-                  <div key={i}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 12 }}>
-                      <span style={{ color: "#475569", fontWeight: 600 }}>{item.category}</span>
-                      <span style={{ color: "#0f172a", fontWeight: 700 }}>${item.amount}</span>
+            <Card className="xl:col-span-2">
+              <Header title="Today's Schedule" subtitle={new Date().toLocaleDateString("en-IN", { weekday: "short", day: "2-digit", month: "short" })} />
+              <div className="space-y-3">
+                {(data?.meetings || []).slice(0, 4).map((meeting, index) => (
+                  <motion.div
+                    key={meeting._id}
+                    {...staggerItem(index)}
+                    whileHover={{ x: 4 }}
+                    className="grid grid-cols-[56px_1fr] gap-3 rounded-xl border-l-4 border-blue-500 bg-slate-50 p-3 dark:bg-white/[0.03]"
+                  >
+                    <div className="text-xs font-black text-slate-500 dark:text-slate-405">
+                      {new Date(meeting.startTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false })}
                     </div>
-                    <div style={{ width: "100%", height: 6, background: "#f1f5f9", borderRadius: 99, overflow: "hidden" }}>
-                      <div style={{ width: `${item.percent}%`, height: "100%", background: item.color, borderRadius: 99, transition: "width 1s ease" }} />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-slate-950 dark:text-white">{meeting.title}</p>
+                      <p className="text-xs text-slate-500 dark:text-[#94a3b8]">{meeting.duration || "30 mins"} · {(meeting.participants || []).length + 1} participants</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
+                {(data?.meetings || []).length === 0 && (
+                  <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-sm font-semibold text-slate-500 dark:border-white/[0.08] dark:text-slate-400">
+                    You have a clear schedule today.
+                  </div>
+                )}
+                <div className="mt-3 rounded-xl bg-emerald-50 p-3 text-xs font-bold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
+                  {pendingLeaves.length} leave days pending approval
+                </div>
               </div>
-              <button style={{ width: "100%", marginTop: 20, padding: "10px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#f8fafc", color: "#0f172a", fontWeight: 700, fontSize: 12.5, cursor: "pointer", transition: "background 0.15s" }}>
-                Generate Report â†’
-              </button>
             </Card>
           </div>
+        </div>
 
-          {/* BOTTOM ROW: Weekly Activity + Recent Tasks + Achievements */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 300px", gap: 20 }}>
-
-            {/* WEEKLY ACTIVITY */}
-            <Card style={{ padding: "22px 24px" }}>
-              <SectionTitle title="Weekly Activity" sub="Tasks completed & hours logged" />
-              <ResponsiveContainer width="100%" height={160}>
-                <AreaChart data={weeklyActivity} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="taskGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2563EB" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} dy={6} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 10 }} />
-                  <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, fontSize: 12 }} />
-                  <Area type="monotone" dataKey="tasks" stroke="#2563EB" strokeWidth={2} fill="url(#taskGrad)" dot={{ fill: "#2563EB", r: 3 }} />
-                </AreaChart>
-              </ResponsiveContainer>
-              <div style={{ display: "flex", gap: 16, marginTop: 12, paddingTop: 12, borderTop: "1px solid #f1f5f9" }}>
-                {[{ label: "Avg Tasks/Day", val: "11.9", icon: Target, color: "#2563EB" }, { label: "Total Hours", val: "43.4h", icon: Clock, color: "#10b981" }, { label: "Focus Score", val: "87%", icon: Zap, color: "#f59e0b" }].map(m => (
-                  <div key={m.label} style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ width: 30, height: 30, borderRadius: 8, background: m.color + "14", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <m.icon size={14} color={m.color} />
-                    </div>
-                    <div>
-                      <p style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", margin: 0 }}>{m.val}</p>
-                      <p style={{ fontSize: 10, color: "#94a3b8", margin: 0 }}>{m.label}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* RECENT TASKS */}
-            <Card style={{ padding: "22px 24px" }}>
-              <SectionTitle title="Recent Tasks" sub="Your active workload" action={() => { }} />
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {recentTasks.map(task => {
-                  const s = statusMap[task.status];
+        {/* ── ZONE 3: ACTIVE INITIATIVES & TEAM ── */}
+        <div>
+          <div className="zone-label mb-3">Zone 3: Active Initiatives & Team</div>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+            <Card className="xl:col-span-8">
+              <Header title="My Projects" subtitle="Initiatives you are currently participating in" action="View All" onAction={() => navigate("/dashboard/employee/projects")} />
+              <div className="grid gap-4 md:grid-cols-2">
+                {projects.slice(0, 4).map(project => {
+                  const daysLeft = project.endDate ? Math.ceil((new Date(project.endDate) - new Date()) / 86400000) : null;
                   return (
-                    <div key={task.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 14px", borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9", cursor: "pointer", transition: "border-color 0.15s" }}>
-                      <div style={{ width: 10, height: 10, borderRadius: "50%", background: priorityMap[task.priority], flexShrink: 0, boxShadow: `0 0 6px ${priorityMap[task.priority]}55` }} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontWeight: 600, fontSize: 13, color: "#0f172a", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{task.title}</p>
-                        <p style={{ fontSize: 11, color: "#94a3b8", margin: "2px 0 0" }}>Due: {task.due}</p>
+                    <motion.div
+                      key={project._id}
+                      whileHover={{ y: -5, borderColor: "#2563eb" }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => navigate("/dashboard/employee/projects")}
+                      className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50/70 p-4 dark:border-white/[0.06] dark:bg-white/[0.03]"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black text-slate-950 dark:text-white">{project.name}</p>
+                          <p className="mt-1 truncate text-xs text-slate-500 dark:text-[#94a3b8]">{project.client || "Internal"}</p>
+                        </div>
+                        <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black uppercase text-blue-600 dark:bg-blue-500/10 dark:text-blue-300">{project.status}</span>
                       </div>
-                      <Badge label={s.label} color={s.color} />
+                      <div className="my-4 flex items-center justify-between">
+                        <AvatarStack people={project.members || []} />
+                        {daysLeft !== null && (
+                          <span className={`text-[11px] font-black ${daysLeft < 7 ? "text-rose-500" : daysLeft < 14 ? "text-amber-500" : "text-emerald-500"}`}>
+                            {daysLeft} days left
+                          </span>
+                        )}
+                      </div>
+                      <ProgressBar pct={project.progress || 0} color={project.color || "#2563eb"} />
+                      <div className="mt-3 flex justify-between text-[11px] font-bold text-slate-500 dark:text-[#94a3b8]">
+                        <span>{project.openTasks || 0} tasks open</span>
+                        <span>{project.progress || 0}%</span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+                {projects.length < 3 && (
+                  <div className="flex flex-col justify-center rounded-xl border border-dashed border-slate-200 p-6 text-center dark:border-white/[0.08]">
+                    <FolderOpen className="mx-auto mb-2 text-slate-300 dark:text-slate-600" size={26} />
+                    <p className="text-sm font-bold text-slate-600 dark:text-slate-300">No more active projects</p>
+                    <button onClick={() => navigate("/dashboard/employee/projects")} className="mt-2 text-xs font-black text-blue-600 dark:text-blue-400">View All Projects</button>
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            <Card className="xl:col-span-4">
+              <Header title="Team" subtitle={`${(data?.team || []).filter(m => m.status === "Online").length} online now`} />
+              <div className="space-y-2">
+                {(data?.team || []).slice(0, 5).map((member, index) => (
+                  <motion.div key={member._id} {...staggerItem(index)} whileHover={{ x: 4 }} className="flex items-center gap-3 rounded-xl p-2 hover:bg-blue-50/60 dark:hover:bg-blue-500/[0.05]">
+                    <div className={`grid h-9 w-9 place-items-center rounded-full bg-blue-600 text-[11px] font-black text-white ring-2 ${member.status === "Online" ? "ring-emerald-400" : "ring-slate-300 dark:ring-slate-600"}`}>
+                      {initials(member.fullName)}
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-slate-950 dark:text-white">{member.fullName}</p>
+                      <p className="truncate text-[11px] text-slate-500 dark:text-[#94a3b8]">{member.designation || "Employee"}</p>
+                    </div>
+                    <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-600 dark:bg-white/[0.06] dark:text-slate-300">{member.status}</span>
+                  </motion.div>
+                ))}
+              </div>
+              <motion.button {...tapFeedback} onClick={() => navigate("/dashboard/employee/messages")} className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-xs font-black text-white">
+                <MessageSquare size={14} /> New Message
+              </motion.button>
+            </Card>
+          </div>
+        </div>
+
+        {/* ── ZONE 4: PERFORMANCE ANALYTICS & AI COPILOT ── */}
+        <div>
+          <div className="zone-label mb-3">Zone 4: Performance Analytics & AI Copilot</div>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            <Card className="xl:col-span-2">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <Header title="Work Analytics" subtitle="Tasks completed and work hours" />
+                <div className="flex rounded-xl bg-slate-100 p-1 dark:bg-white/[0.05]">
+                  {["This Week", "This Month", "Last Month"].map(tab => (
+                    <button key={tab} onClick={() => handleChartRange(tab)} className={`rounded-lg px-3 py-1.5 text-[11px] font-black ${chartRange === tab ? "bg-white text-blue-600 shadow-sm dark:bg-[#111827] dark:text-blue-300" : "text-slate-500 dark:text-slate-400"}`}>
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={data?.weeklyActivity || []} margin={{ top: 10, right: 4, bottom: 0, left: -18 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148,163,184,0.18)" />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 10 }} />
+                    <Tooltip contentStyle={{ background: "#0f172a", border: "0", borderRadius: 12, color: "#fff", fontSize: 12 }} />
+                    <Area type="monotone" dataKey="hours" fill="#10b98122" stroke="none" />
+                    <Bar dataKey="tasks" fill="#2563eb" radius={[5, 5, 0, 0]} barSize={16} />
+                    <Line type="monotone" dataKey="hours" stroke="#10b981" strokeWidth={3} dot={{ r: 3, fill: "#10b981" }} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <div className="rounded-full bg-blue-50 px-3 py-2 text-center text-xs font-black text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">{(performance.workedThisWeek || 0).toFixed(1)}h worked</div>
+                <div className="rounded-full bg-emerald-50 px-3 py-2 text-center text-xs font-black text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">{performance.tasksCompletedThisWeek || 0} tasks done</div>
+                <div className="rounded-full bg-violet-50 px-3 py-2 text-center text-xs font-black text-violet-700 dark:bg-violet-500/10 dark:text-violet-300">{performance.attendanceRate || 0}% attendance</div>
+              </div>
+            </Card>
+
+            <Card className="border-indigo-200 bg-[linear-gradient(135deg,#eff6ff,#faf5ff)] dark:border-indigo-300/10 dark:bg-[linear-gradient(135deg,#0d1526,#130d26)]">
+              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.12em] text-blue-600 dark:text-blue-300">AI Insights</p>
+              <Header title="Aeccentric Copilot" />
+              <div className="space-y-3">
+                {(data?.insights || []).slice(0, 3).map((insight, index) => {
+                  const Icon = insightIcons[insight.icon] || Sparkles;
+                  return (
+                    <motion.div key={insight.title} {...staggerItem(index)} className="rounded-xl border border-white/70 bg-white/70 p-3 dark:border-white/[0.08] dark:bg-white/[0.04]">
+                      <div className="flex gap-3">
+                        <Icon className="mt-0.5 shrink-0 text-blue-600 dark:text-blue-300" size={16} />
+                        <div>
+                          <p className="text-sm font-black text-slate-950 dark:text-white">{insight.title}</p>
+                          <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-[#94a3b8]">{insight.text}</p>
+                        </div>
+                      </div>
+                    </motion.div>
                   );
                 })}
               </div>
-              <button style={{ width: "100%", marginTop: 14, padding: "9px", borderRadius: 10, border: "1.5px dashed #e2e8f0", background: "transparent", color: "#2563EB", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
-                + Add New Task
-              </button>
-            </Card>
-
-            {/* ACHIEVEMENTS */}
-            <Card style={{ padding: "22px 22px", display: "flex", flexDirection: "column", gap: 14 }}>
-              <SectionTitle title="Achievements" sub="Earned this quarter" />
-              {[
-                { icon: Star, label: "Top Performer", sub: "April 2025", color: "#f59e0b" },
-                { icon: Award, label: "100% Attendance", sub: "March 2025", color: "#2563EB" },
-                { icon: TrendingUp, label: "Sprint Champion", sub: "3 sprints in a row", color: "#10b981" },
-                { icon: Coffee, label: "Team Mentor", sub: "Onboarded 2 devs", color: "#a855f7" },
-              ].map((a, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: 12, background: a.color + "0d", border: `1px solid ${a.color}20` }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: a.color + "20", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <a.icon size={16} color={a.color} />
-                  </div>
-                  <div>
-                    <p style={{ fontWeight: 700, fontSize: 12.5, color: "#0f172a", margin: 0 }}>{a.label}</p>
-                    <p style={{ fontSize: 11, color: "#94a3b8", margin: 0 }}>{a.sub}</p>
-                  </div>
-                </div>
-              ))}
+              <button onClick={() => navigate("/dashboard/employee/performance")} className="mt-4 text-xs font-black text-blue-600 dark:text-blue-300">View Full Report</button>
             </Card>
           </div>
+        </div>
 
-        </main>
-      </div>
+        {/* ── ZONE 5: ACTIVE DELIVERABLES CHECKLIST ── */}
+        <div>
+          <div className="zone-label mb-3">Zone 5: Recent Deliverables Checklist</div>
+          <Card hover={false}>
+            <Header title="Recent Tasks" subtitle="Your active deliverables checklist" action="View All" onAction={() => navigate("/dashboard/employee/tasks")} />
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-100 text-[10px] uppercase tracking-[0.08em] text-slate-400 dark:border-white/[0.06]">
+                    <th className="py-3 px-4">Task Name</th>
+                    <th className="px-4">Project</th>
+                    <th className="px-4">Priority</th>
+                    <th className="px-4">Due Date</th>
+                    <th className="px-4">Status</th>
+                    <th className="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tasks.slice(0, 8).map((task, index) => (
+                    <motion.tr key={task._id} {...staggerItem(index)} whileHover={{ x: 3 }} className="border-b border-slate-100 last:border-0 dark:border-white/[0.05] hover:bg-slate-50/50 dark:hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-slate-950 dark:text-white">{task.title}</td>
+                      <td className="px-4 text-slate-500 dark:text-[#94a3b8]">{task.project?.name || "General"}</td>
+                      <td className="px-4"><span className="inline-flex items-center gap-2 text-xs font-bold capitalize"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: priorityColor[task.priority] || "#64748b" }} />{task.priority}</span></td>
+                      <td className={`px-4 ${dueLabel(task.dueDate) === "Overdue" ? "font-bold text-rose-500" : "text-slate-500 dark:text-[#94a3b8]"}`}>{dueLabel(task.dueDate)}</td>
+                      <td className="px-4"><span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-black text-slate-600 dark:bg-white/[0.06] dark:text-slate-300">{statusLabels[task.status] || task.status}</span></td>
+                      <td className="py-3 px-4 text-right"><button onClick={() => navigate("/dashboard/employee/tasks")} className="text-blue-600 dark:text-blue-300"><ChevronRight size={16} /></button></td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+              {tasks.length === 0 && <div className="py-10 text-center text-sm font-semibold text-slate-500">No recent tasks - request tasks from your manager.</div>}
+            </div>
+          </Card>
+        </div>
 
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
-        * { box-sizing: border-box; }
-        .kpi-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,0.10) !important; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
-        input::placeholder { color: #94a3b8; }
-        tr:hover td { background: #fafbff; }
-      `}</style>
-    </div>
+        {/* ── ZONE 6: WORKSPACE QUICK ACTIONS ── */}
+        <div>
+          <div className="zone-label mb-3">Zone 6: Workspace Quick Actions</div>
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-3 xl:grid-cols-6">
+            {quickActions.map((action) => (
+              <motion.button
+                key={action.label}
+                {...hoverLift}
+                {...tapFeedback}
+                onClick={() => handleQuickAction(action.key)}
+                className="flex min-h-[72px] items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white p-4 text-xs font-black text-slate-700 shadow-sm dark:border-white/[0.07] dark:bg-[#111827] dark:text-slate-200"
+              >
+                <action.icon size={16} /> {action.label}
+              </motion.button>
+            ))}
+            <input ref={fileInputRef} type="file" className="hidden" />
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }

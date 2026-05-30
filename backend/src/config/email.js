@@ -1,12 +1,11 @@
 import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-dotenv.config();
+import { env } from './env.js';
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT, 10),
+  host: env.smtp.host,
+  port: env.smtp.port,
   secure: false,
-  auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+  auth: { user: env.smtp.user, pass: env.smtp.pass },
 });
 
 /**
@@ -15,7 +14,7 @@ const transporter = nodemailer.createTransport({
  */
 export const sendEmail = async ({ to, subject, html }) => {
   await transporter.sendMail({
-    from: `"AECCENTRIC EMS" <${process.env.SMTP_USER}>`,
+    from: `"AECCENTRIC EMS" <${env.smtp.user}>`,
     to, subject, html,
   });
 };

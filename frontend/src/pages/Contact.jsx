@@ -4,9 +4,27 @@ import { Mail, Phone, MapPin, ArrowRight, CheckCircle } from 'lucide-react';
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
 
-  :root {
+  
+  html.dark .nexus-service-page,
+  [data-theme="dark"] .nexus-service-page {
+    --bg:         #030712;
+    --bg-card:    #0D1526;
+    --bg-sec:     #070D1A;
+    --border:     rgba(255, 255, 255, 0.08);
+    --border-h:   color-mix(in srgb, var(--accent) 35%, transparent);
+    --text:       #F1F5F9;
+    --text-muted: #94A3B8;
+    --text-hint:  #64748B;
+    --accent-lt:  color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+
+  .nexus-service-page {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--f, 'Inter', sans-serif);
+    -webkit-font-smoothing: antialiased;
     --bg:         #FFFFFF;
     --bg-card:    #FFFFFF;
     --bg-sec:     #F8F9FB;
@@ -23,46 +41,46 @@ const css = `
     --f: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
-  body { background: var(--bg); color: var(--text); font-family: var(--f); -webkit-font-smoothing: antialiased; }
-  .page { max-width: 1120px; margin: 0 auto; padding: 0 32px 120px; }
+  
+.nexus-service-page .page { max-width: 1120px; margin: 0 auto; padding: 0 32px 120px; }
 
   /* HERO */
-  .hero { padding: 120px 0 64px; text-align: center; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; }
-  .hero-eye { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-lt); border: 1px solid var(--border-h); border-radius: 100px; padding: 5px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
-  .hero-title { font-size: clamp(36px, 4.8vw, 58px); font-weight: 800; line-height: 1.06; letter-spacing: -0.035em; color: var(--text); margin-bottom: 18px; }
-  .hero-title .accent { color: var(--accent); }
-  .hero-desc { font-size: 16px; line-height: 1.78; color: var(--text-muted); max-width: 560px; margin: 0 auto 32px; font-weight: 400; }
+.nexus-service-page .hero { padding: 120px 0 64px; text-align: center; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; }
+.nexus-service-page .hero-eye { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-lt); border: 1px solid var(--border-h); border-radius: 100px; padding: 5px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+.nexus-service-page .hero-title { font-size: clamp(36px, 4.8vw, 58px); font-weight: 800; line-height: 1.06; letter-spacing: -0.035em; color: var(--text); margin-bottom: 18px; }
+.nexus-service-page .hero-title .accent { color: var(--accent); }
+.nexus-service-page .hero-desc { font-size: 16px; line-height: 1.78; color: var(--text-muted); max-width: 560px; margin: 0 auto 32px; font-weight: 400; }
   
   /* SECTION */
-  .section { padding: 48px 0; }
+.nexus-service-page .section { padding: 48px 0; }
   
   /* CONTACT CONTENT */
-  .contact-wrap { display: flex; gap: 48px; }
+.nexus-service-page .contact-wrap { display: flex; gap: 48px; }
   @media (max-width: 760px) { .contact-wrap { flex-direction: column; } }
   
-  .contact-form-side { flex: 1; text-align: left; }
-  .contact-info-side { width: 35%; flex-shrink: 0; text-align: left; }
+.nexus-service-page .contact-form-side { flex: 1; text-align: left; }
+.nexus-service-page .contact-info-side { width: 35%; flex-shrink: 0; text-align: left; }
   @media (max-width: 760px) { .contact-info-side { width: 100%; } }
   
-  .form-group { margin-bottom: 20px; }
-  .form-label { font-size: 12px; font-weight: 700; color: var(--text); text-transform: uppercase; margin-bottom: 8px; display: block; }
-  .form-input { width: 100%; padding: 12px 16px; border-radius: var(--r-md); border: 1.5px solid var(--border); background: var(--bg-card); font-family: var(--f); font-size: 14px; outline: none; transition: border-color .2s; }
-  .form-input:focus { border-color: var(--accent); }
-  .form-textarea { width: 100%; padding: 12px 16px; border-radius: var(--r-md); border: 1.5px solid var(--border); background: var(--bg-card); font-family: var(--f); font-size: 14px; outline: none; transition: border-color .2s; min-height: 120px; resize: vertical; }
-  .form-textarea:focus { border-color: var(--accent); }
+.nexus-service-page .form-group { margin-bottom: 20px; }
+.nexus-service-page .form-label { font-size: 12px; font-weight: 700; color: var(--text); text-transform: uppercase; margin-bottom: 8px; display: block; }
+.nexus-service-page .form-input { width: 100%; padding: 12px 16px; border-radius: var(--r-md); border: 1.5px solid var(--border); background: var(--bg-card); font-family: var(--f); font-size: 14px; outline: none; transition: border-color .2s; }
+.nexus-service-page .form-input:focus { border-color: var(--accent); }
+.nexus-service-page .form-textarea { width: 100%; padding: 12px 16px; border-radius: var(--r-md); border: 1.5px solid var(--border); background: var(--bg-card); font-family: var(--f); font-size: 14px; outline: none; transition: border-color .2s; min-height: 120px; resize: vertical; }
+.nexus-service-page .form-textarea:focus { border-color: var(--accent); }
   
-  .submit-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 100px; padding: 14px 28px; font-family: var(--f); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity .15s, transform .15s; width: 100%; }
-  .submit-btn:hover { opacity: 0.87; transform: translateY(-1px); }
+.nexus-service-page .submit-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 100px; padding: 14px 28px; font-family: var(--f); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity .15s, transform .15s; width: 100%; }
+.nexus-service-page .submit-btn:hover { opacity: 0.87; transform: translateY(-1px); }
   
-  .info-box { padding: 24px; border-radius: var(--r-md); border: 1.5px solid var(--border); background: var(--bg-sec); margin-bottom: 24px; }
-  .info-title { font-size: 14px; font-weight: 700; color: var(--text); text-transform: uppercase; margin-bottom: 12px; }
-  .info-text { font-size: 13.5px; line-height: 1.75; color: var(--text-muted); font-weight: 400; }
-  .info-link { color: var(--accent); text-decoration: none; font-weight: 600; }
-  .info-link:hover { text-decoration: underline; }
+.nexus-service-page .info-box { padding: 24px; border-radius: var(--r-md); border: 1.5px solid var(--border); background: var(--bg-sec); margin-bottom: 24px; }
+.nexus-service-page .info-title { font-size: 14px; font-weight: 700; color: var(--text); text-transform: uppercase; margin-bottom: 12px; }
+.nexus-service-page .info-text { font-size: 13.5px; line-height: 1.75; color: var(--text-muted); font-weight: 400; }
+.nexus-service-page .info-link { color: var(--accent); text-decoration: none; font-weight: 600; }
+.nexus-service-page .info-link:hover { text-decoration: underline; }
   
-  .social-links { display: flex; gap: 12px; margin-top: 12px; }
-  .social-icon { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all .2s; }
-  .social-icon:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+.nexus-service-page .social-links { display: flex; gap: 12px; margin-top: 12px; }
+.nexus-service-page .social-icon { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all .2s; }
+.nexus-service-page .social-icon:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
 `;
 
 const Contact = () => {
@@ -80,7 +98,8 @@ const Contact = () => {
   };
 
   return (
-    <div className="page">
+    <div className="nexus-service-page">
+      <div className="page">
       <style>{css}</style>
       
       {/* HERO */}
@@ -174,6 +193,7 @@ const Contact = () => {
         </div>
       </section>
 
+    </div>
     </div>
   );
 };
