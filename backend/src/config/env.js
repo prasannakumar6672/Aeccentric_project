@@ -22,6 +22,7 @@ export const env = {
   nodeEnv: getEnv('NODE_ENV', 'development'),
   clientUrl: getEnv('CLIENT_URL', 'http://localhost:5173,http://127.0.0.1:5173'),
   mongoUri: requireEnv('MONGODB_URI'),
+  mongoDnsServers: getEnv('MONGODB_DNS_SERVERS', ''),
   jwtSecret: requireEnv('JWT_SECRET'),
   jwtExpiresIn: getEnv('JWT_EXPIRES_IN', '15m'),
   refreshTokenSecret: requireEnv('REFRESH_TOKEN_SECRET'),
