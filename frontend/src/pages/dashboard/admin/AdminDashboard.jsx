@@ -389,7 +389,7 @@ export default function AdminDashboard() {
       {/* ── ZONE 1: KPI STRIP (6 Cards, 2-col each) ── */}
       <div>
         <div className="zone-label mb-3">Zone 1: Executive Key Metrics</div>
-        <motion.div variants={stagger} className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           <KPICard
             label="Total Headcount"
             value={overview.total}
@@ -703,7 +703,7 @@ export default function AdminDashboard() {
               <span className="chip chip-info">42 Active</span>
             </div>
 
-            <div className="card-body overflow-x-auto custom-scrollbar p-0 flex-1">
+            <div className="card-body table-responsive-wrapper p-0 flex-1">
               <table className="data-table">
                 <thead>
                   <tr>
@@ -892,7 +892,7 @@ export default function AdminDashboard() {
               ))}
             </div>
 
-            <div className="card-body overflow-x-auto custom-scrollbar p-0 flex-1 max-h-[340px]">
+            <div className="card-body table-responsive-wrapper p-0 flex-1 max-h-[340px]">
               <table className="data-table">
                 <thead className="sticky top-0 bg-[var(--surface-L1)] z-10">
                   <tr>

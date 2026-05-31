@@ -50,6 +50,9 @@ const css = `
 
   
 .nexus-service-page .page { max-width: 1120px; margin: 0 auto; padding: 0 32px 120px; }
+  @media (max-width: 768px) {
+    .nexus-service-page .page { padding: 0 16px 80px; }
+  }
 
   /* NAV */
 .nexus-service-page .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; border-bottom: 1px solid var(--border); }
@@ -95,6 +98,7 @@ const css = `
   /* STATS */
 .nexus-service-page .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; margin: 48px 0 0; }
   @media (max-width: 700px) { .stats-row { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr; } }
 .nexus-service-page .stat-cell { background: var(--bg-sec); padding: 26px 22px; transition: background .2s; cursor: default; }
 .nexus-service-page .stat-cell:hover { background: var(--accent-lt); }
 .nexus-service-page .stat-val { font-size: 38px; font-weight: 800; line-height: 1; color: var(--accent); letter-spacing: -0.04em; margin-bottom: 5px; }
@@ -140,7 +144,7 @@ const css = `
 .nexus-service-page .tech-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
   @media (max-width: 860px) { .tech-grid { grid-template-columns: repeat(2,1fr); } }
   @media (max-width: 480px) { .tech-grid { grid-template-columns: 1fr; } }
-.nexus-service-page .tech-card { padding: 16px 14px; border-radius: var(--r-sm); background: #fff; border: 1px solid var(--border); }
+.nexus-service-page .tech-card { padding: 16px 14px; border-radius: var(--r-sm); background: var(--bg-card); border: 1px solid var(--border); }
 .nexus-service-page .tech-cat { display: flex; align-items: center; gap: 7px; margin-bottom: 12px; }
 .nexus-service-page .tech-dot { width: 6px; height: 6px; border-radius: 50%; }
 .nexus-service-page .tech-cat-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
@@ -260,7 +264,7 @@ const PROOF = [
 ];
 
 const FAQS = [
-  { q: "Do we need an internet connection for the AI to work?", a: "No. Manufacturing environments often have unreliable internet or strict air-gapped security requirements. We deploy 'Edge AI' â€” the models run entirely locally on industrial PCs attached to the machine, requiring zero cloud connectivity for inference." },
+  { q: "Do we need an internet connection for the AI to work?", a: "No. Manufacturing environments often have unreliable internet or strict air-gapped security requirements. We deploy 'Edge AI' — the models run entirely locally on industrial PCs attached to the machine, requiring zero cloud connectivity for inference." },
   { q: "How much training data do you need for Computer Vision?", a: "Less than you think. While more is better, we use techniques like synthetic data generation and transfer learning to train highly accurate models with as few as 100 images of defective parts." },
   { q: "Can you integrate with our 20-year-old machines?", a: "Yes. Even if a machine has no modern digital interface, we can retro-fit it with external IoT sensors (vibration, acoustic, optical) or use a camera to physically read analogue dials and light-towers to digitize its state." },
   { q: "Who retains the intellectual property of the custom trained AI models?", a: "You do. We build the architecture, but the specific weights of the neural network trained on your proprietary parts and processes belong entirely to you." },

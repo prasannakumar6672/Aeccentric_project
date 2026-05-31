@@ -670,8 +670,8 @@ export default function EmployeeDashboard() {
           <div className="zone-label mb-3">Zone 5: Recent Deliverables Checklist</div>
           <Card hover={false}>
             <Header title="Recent Tasks" subtitle="Your active deliverables checklist" action="View All" onAction={() => navigate("/dashboard/employee/tasks")} />
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left text-sm">
+            <div className="table-responsive-wrapper p-0">
+              <table className="w-full min-w-[760px] text-left text-sm data-table">
                 <thead>
                   <tr className="border-b border-slate-100 text-[10px] uppercase tracking-[0.08em] text-slate-400 dark:border-white/[0.06]">
                     <th className="py-3 px-4">Task Name</th>

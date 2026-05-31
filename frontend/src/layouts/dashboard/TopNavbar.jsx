@@ -231,7 +231,7 @@ const TopNavbar = ({ onMenuClick, title, role = 'admin', onOpenPalette, isDark, 
         </button>
 
         <div className="min-w-0">
-          <h1 className="truncate text-[18px] font-bold leading-tight text-gray-900 dark:text-white">
+          <h1 className="truncate text-[16px] sm:text-[18px] font-bold leading-tight text-gray-900 dark:text-white">
             {title || 'Overview'}
           </h1>
           <div className="hidden items-center gap-1.5 sm:flex">
@@ -320,7 +320,7 @@ const TopNavbar = ({ onMenuClick, title, role = 'admin', onOpenPalette, isDark, 
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 6, scale: 0.97 }}
                 transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute right-0 top-full mt-2 w-[360px] bg-white dark:bg-[#0d1526] border border-gray-150 dark:border-white/[0.07] rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/50 overflow-hidden z-50"
+                className="absolute right-[-12px] sm:right-0 top-full mt-2 w-[92vw] sm:w-[360px] bg-white dark:bg-[#0d1526] border border-gray-150 dark:border-white/[0.07] rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/50 overflow-hidden z-50"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 dark:border-white/[0.05]">

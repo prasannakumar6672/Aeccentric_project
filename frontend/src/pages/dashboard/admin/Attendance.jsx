@@ -294,7 +294,7 @@ export default function Attendance() {
             </div>
 
             {/* Logs Table */}
-            <div className="card-body p-0">
+            <div className="card-body table-responsive-wrapper p-0">
               {filteredLogs.length === 0 ? (
                 <div className="text-center py-16 text-gray-400">No matching attendance records found.</div>
               ) : (
@@ -427,7 +427,7 @@ export default function Attendance() {
               </div>
             </div>
 
-            <div className="card-body p-0">
+            <div className="card-body table-responsive-wrapper p-0">
               {myLogs.length === 0 ? (
                 <div className="text-center py-20 text-gray-450">No previous sessions found.</div>
               ) : (

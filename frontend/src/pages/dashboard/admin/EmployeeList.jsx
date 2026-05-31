@@ -328,7 +328,7 @@ export default function EmployeeList() {
       {/* ─── FILTERS AND CONTROL BAR ─── */}
       <div className="glass-card p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-5 relative z-30 shadow-sm border border-[var(--border-default)] !overflow-visible">
         {/* Search */}
-        <div className="relative flex-1 min-w-[320px] max-w-xl">
+        <div className="relative flex-1 min-w-0 sm:min-w-[320px] max-w-xl">
           <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 pointer-events-none">
             <Search size={16} />
           </span>
@@ -397,7 +397,7 @@ export default function EmployeeList() {
             <p className="text-xs text-gray-400 mt-1">Try tweaking your keyword search or active filter toggles.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto custom-scrollbar">
+          <div className="table-responsive-wrapper p-0">
             <table className="data-table w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-gray-100 dark:border-white/[0.04] text-gray-400 dark:text-[#5A6282] font-extrabold uppercase tracking-wider text-[10px] bg-gray-50/50 dark:bg-white/[0.01]">

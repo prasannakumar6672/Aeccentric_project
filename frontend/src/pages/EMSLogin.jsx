@@ -359,8 +359,10 @@ export default function AuthSwitch() {
 
         @media (max-width: 870px) {
           .auth-page-wrapper .auth-container {
-            min-height: 800px;
-            height: 100vh;
+            min-height: 520px;
+            height: auto;
+            max-height: none;
+            padding-bottom: 20px;
           }
           .auth-page-wrapper .signin-signup {
             width: 100%;

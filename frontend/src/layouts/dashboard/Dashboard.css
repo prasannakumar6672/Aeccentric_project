@@ -582,13 +582,48 @@ html.dark,
   .operations-row { grid-template-columns: 1fr !important; }
   .projects-row { grid-template-columns: 1fr !important; }
   .workforce-row { grid-template-columns: 1fr !important; }
+  
+  .dash-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .dash-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 }
 
 @media (max-width: 768px) {
   .kpi-row { grid-template-columns: 1fr !important; }
-  .data-table thead th:nth-child(n+4) { display: none; }
-  .dash-table thead th:nth-child(n+4) { display: none; }
+  
+  /* Synchronized table hiding to avoid misaligned column layouts on mobile */
+  .data-table thead th:nth-child(n+4),
+  .data-table tbody td:nth-child(n+4),
+  .dash-table thead th:nth-child(n+4),
+  .dash-table tbody td:nth-child(n+4) { 
+    display: none !important; 
+  }
 }
+
+@media (max-width: 640px) {
+  .dash-grid-4,
+  .dash-grid-3,
+  .dash-grid-2 { 
+    grid-template-columns: minmax(0, 1fr) !important; 
+  }
+  
+  /* Dynamic page padding adjustments for card screens */
+  :root {
+    --dashboard-padding-x: 16px !important;
+    --dashboard-padding-y: 16px !important;
+    --dashboard-card-padding: 16px !important;
+  }
+}
+
+/* Elegant horizontally scrollable wrapper for tables that shouldn't cut columns */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+}
+
 
 /* ── PREMIUM FILTER PILLS ────────────────────────────────────── */
 .filter-pills-container {

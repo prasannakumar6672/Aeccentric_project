@@ -52,7 +52,7 @@ export default function Footer() {
         filter: 'blur(100px)', pointerEvents: 'none',
       }} />
 
-      <div style={{ position: 'relative', zIndex: 10, maxWidth: '1350px', margin: '0 auto', padding: '5rem 2rem 0' }}>
+      <div className="footer-inner-container" style={{ position: 'relative', zIndex: 10, maxWidth: '1350px', margin: '0 auto' }}>
 
         {/* Top grid */}
         <div style={{
@@ -153,9 +153,15 @@ export default function Footer() {
       </div>
 
       <style>{`
+        .footer-inner-container {
+          padding: 5rem 2rem 0;
+        }
         .footer-top-grid { grid-template-columns: 4fr 8fr; }
         .footer-links-grid { grid-template-columns: repeat(3,1fr); }
         @media(max-width:768px){
+          .footer-inner-container {
+            padding: 3rem 1.25rem 0 !important;
+          }
           .footer-top-grid { grid-template-columns: 1fr !important; gap: 3rem !important; }
           .footer-links-grid { grid-template-columns: repeat(2,1fr) !important; }
         }

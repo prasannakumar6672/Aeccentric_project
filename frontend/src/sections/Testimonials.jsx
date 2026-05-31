@@ -118,7 +118,7 @@ const css = `
 .reveal-delay-1 { transition-delay: 0.15s; }
 .reveal-delay-2 { transition-delay: 0.30s; }
 
-@media (max-width: 900px) { .testi__layout { grid-template-columns: 1fr; } .testi__tabs { flex-direction: row; overflow-x: auto; padding-bottom: 0.5rem; } .testi__tab { flex-shrink: 0; } }
+@media (max-width: 1024px) { .testi__layout { grid-template-columns: 1fr; } .testi__tabs { flex-direction: row; overflow-x: auto; padding-bottom: 0.5rem; } .testi__tab { flex-shrink: 0; } }
 @media (max-width: 640px) { .testi__main { padding: 1.5rem; } .testi__quote { font-size: 0.95rem; } }
 `
 
@@ -145,8 +145,8 @@ export default function Testimonials() {
   return (
     <>
       <style>{css}</style>
-      <section ref={ref} className="testi section">
-        <div className="container">
+      <section ref={ref} className="testi section" style={{ width: '100%', padding: '6rem 0', overflow: 'hidden' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 1.5rem', position: 'relative', zIndex: 1 }}>
           <div className="testi__header">
             <p className={`section-label reveal${visible ? ' in' : ''}`}>Client Stories</p>
             <h2 className={`testi__title reveal reveal-delay-1${visible ? ' in' : ''}`}>

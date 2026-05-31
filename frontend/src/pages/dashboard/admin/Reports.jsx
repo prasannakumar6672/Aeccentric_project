@@ -424,7 +424,7 @@ export default function Reports() {
             No live ledger rows match the active console filters.
           </div>
         ) : (
-          <div className="overflow-x-auto custom-scrollbar">
+          <div className="table-responsive-wrapper p-0">
             <table className="data-table min-w-[820px]">
               <thead>
                 <tr>

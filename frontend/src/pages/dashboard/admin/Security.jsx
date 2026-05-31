@@ -220,7 +220,7 @@ export default function Security() {
             <p className="text-sm font-bold text-gray-500">No security events logged yet</p>
           </div>
         ) : (
-          <div className="overflow-x-auto custom-scrollbar">
+          <div className="table-responsive-wrapper p-0">
             <table className="data-table w-full border-collapse">
               <thead>
                 <tr>

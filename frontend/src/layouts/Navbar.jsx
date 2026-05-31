@@ -5,11 +5,11 @@ import { ChevronDown, Sun, Moon, LayoutDashboard, Menu, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const SERVICES = [
-  { name: 'AI Services & Automation', href: '/services/ai-services-and-automation', tag: 'Popular' },
+  { name: 'AI Services & Automation', href: '/services/ai-services-and-automation', tag: null },
   { name: 'IT & Product Development', href: '/services/it-product-development', tag: null },
   { name: '3D Printing & Engineering', href: '/services/3d-printing-and-engineering-solutions', tag: null },
   { name: 'Digital Transformation', href: '/services/digital-transformation-services', tag: null },
-  { name: 'AI-Powered Manufacturing', href: '/services/ai-powered-manufacturing', tag: 'New' },
+  { name: 'AI-Powered Manufacturing', href: '/services/ai-powered-manufacturing', tag: null },
 ];
 
 const WORK = [
@@ -178,8 +178,8 @@ const Navbar = () => {
               src="/logo.png"
               alt="AECCENTRIC"
               className={`h-[40px] w-auto object-contain transition-transform duration-500 group-hover:scale-[1.02] ${theme === 'dark'
-                  ? 'brightness-[1.2] invert'
-                  : 'mix-blend-multiply brightness-[1.1] contrast-[1.2]'
+                ? 'brightness-[1.2] invert'
+                : 'mix-blend-multiply brightness-[1.1] contrast-[1.2]'
                 }`}
             />
             <span className="text-[16px] font-black uppercase tracking-wider text-[var(--text)] transition-colors duration-300">
@@ -206,8 +206,8 @@ const Navbar = () => {
                 ) : (
                   <button
                     className={`flex items-center gap-1.5 px-4 py-2.5 rounded-[12px] text-[14px] font-medium tracking-wide transition-all duration-300 ${activeMenu === item.menu
-                        ? 'text-[var(--text)] bg-[var(--bg-secondary)]'
-                        : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-secondary)]'
+                      ? 'text-[var(--text)] bg-[var(--bg-secondary)]'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-secondary)]'
                       }`}
                   >
                     {item.name}
@@ -297,7 +297,7 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="lg:hidden fixed top-0 right-0 bottom-0 w-[300px] bg-[var(--bg-card)] border-l border-[var(--border)] z-[95] shadow-2xl p-6 flex flex-col justify-between pointer-events-auto overflow-y-auto"
+              className="lg:hidden fixed top-0 right-0 bottom-0 w-[85vw] max-w-[320px] bg-[var(--bg-card)] border-l border-[var(--border)] z-[95] shadow-2xl p-6 flex flex-col justify-between pointer-events-auto overflow-y-auto"
             >
               <div className="flex flex-col gap-6 mt-16">
                 <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
@@ -333,9 +333,8 @@ const Navbar = () => {
                       <div key={item.name} className="flex flex-col">
                         <button
                           onClick={() => setExpandedMenu(isExpanded ? null : item.name)}
-                          className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-[14px] font-bold transition-all cursor-pointer ${
-                            isExpanded ? 'text-[var(--text)] bg-[var(--bg-secondary)]' : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-secondary)]'
-                          }`}
+                          className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-[14px] font-bold transition-all cursor-pointer ${isExpanded ? 'text-[var(--text)] bg-[var(--bg-secondary)]' : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-secondary)]'
+                            }`}
                         >
                           <span>{item.name}</span>
                           <ChevronDown

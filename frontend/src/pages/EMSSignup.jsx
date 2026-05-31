@@ -218,7 +218,7 @@ const EMSSignup = () => {
             {/* Card top accent */}
             <div className="h-[3px] w-full" style={{ background: 'linear-gradient(90deg, #2563EB, #1D4ED8)' }} />
 
-            <div className="p-10">
+            <div className="p-6 sm:p-10">
               {/* Header */}
               <div style={{
                 opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(16px)',

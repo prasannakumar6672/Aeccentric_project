@@ -242,7 +242,7 @@ function InteractiveNeuralCanvas({ isDark }) {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     let animationFrameId;
-    
+
     // Explicit fail-safe dimensions initialization
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
@@ -257,15 +257,15 @@ function InteractiveNeuralCanvas({ isDark }) {
       if (!canvas) return;
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
-      
+
       // Fallback to window dimensions if container bounding box is empty during layout pass
       const w = rect.width || window.innerWidth;
       const h = rect.height || window.innerHeight;
-      
+
       width = canvas.width = w * dpr;
       height = canvas.height = h * dpr;
       ctx.scale(dpr, dpr);
-      
+
       width = w;
       height = h;
     };
@@ -400,7 +400,7 @@ function InteractiveNeuralCanvas({ isDark }) {
         ctx.beginPath();
         ctx.arc(x, y, 2.2, 0, Math.PI * 2);
         ctx.fillStyle = isDark ? "rgba(96, 165, 250, 0.95)" : "rgba(37, 99, 235, 0.9)";
-        
+
         ctx.shadowBlur = isDark ? 6 : 0;
         ctx.shadowColor = isDark ? "rgba(96, 165, 250, 0.9)" : "transparent";
         ctx.fill();
