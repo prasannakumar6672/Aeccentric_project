@@ -57,7 +57,7 @@ const ServiceCard = ({ service, index }) => {
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <div ref={ref} style={{ position: 'sticky', top: 0, zIndex: index + 1, height: '100vh' }}>
+    <div ref={ref} className="svc-card-outer">
       <div style={{
         width: '100%', height: '100%', display: 'grid',
         gridTemplateColumns: '1fr 1fr', background: 'var(--bg)', transition: 'background 0.4s',
@@ -100,7 +100,7 @@ const ServiceCard = ({ service, index }) => {
           >
             {/* Icon */}
             <div style={{
-              width: '60px', height: '60px', borderRadius: '18px', marginBottom: '2rem',
+              width: 'clamp(44px,6vw,60px)', height: 'clamp(44px,6vw,60px)', borderRadius: '18px', marginBottom: 'clamp(1rem,3vw,2rem)',
               background: 'var(--bg-card)', border: `1px solid ${service.accent}25`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: 'var(--shadow-sm)',
@@ -164,7 +164,7 @@ export default function Services() {
   return (
     <section style={{ width: '100%', background: 'var(--bg)', transition: 'background 0.4s' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', padding: '5rem 1.5rem 4rem' }}>
+      <div style={{ textAlign: 'center', padding: 'clamp(3rem,7vw,5rem) 1.25rem clamp(2rem,5vw,4rem)' }}>
         <div className="pill-badge" style={{ display: 'inline-flex', marginBottom: '1.5rem' }}>
           <span className="pill-dot" />
           Capabilities
@@ -183,13 +183,35 @@ export default function Services() {
       </div>
 
       <style>{`
+        .svc-card-outer {
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          height: 100vh;
+        }
         .svc-grid { grid-template-columns: 1fr 1fr; }
         .svc-img-col { height: 100vh; }
+        .svc-content-col { padding: clamp(2rem,5vw,5rem); }
         .svc-points-grid { grid-template-columns: 1fr 1fr; }
-        @media(max-width:768px){
-          .svc-grid { grid-template-columns: 1fr !important; }
-          .svc-img-col { height: 45vh !important; }
-          .svc-points-grid { grid-template-columns: 1fr !important; }
+        @media (max-width: 768px) {
+          .svc-card-outer {
+            position: relative !important;
+            height: auto !important;
+            z-index: auto !important;
+          }
+          .svc-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .svc-img-col {
+            height: 200px !important;
+          }
+          .svc-content-col {
+            padding: 1.25rem !important;
+          }
+          .svc-points-grid {
+            grid-template-columns: 1fr !important;
+            gap: 0.5rem !important;
+          }
         }
       `}</style>
     </section>

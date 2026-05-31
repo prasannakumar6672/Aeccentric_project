@@ -35,8 +35,14 @@ export default function Hero() {
 
   return (
     <section
-      className="relative isolate w-full min-h-screen flex flex-col items-center justify-center overflow-hidden pt-[100px] pb-28 lg:pb-40 px-6"
-      style={{ background: "var(--bg)", transition: "background 0.4s" }}
+      className="hero-section relative isolate w-full flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6"
+      style={{
+        background: "var(--bg)",
+        transition: "background 0.4s",
+        minHeight: "100svh",
+        paddingTop: "clamp(72px, 12vw, 110px)",
+        paddingBottom: "clamp(48px, 8vw, 120px)",
+      }}
     >
       {/* ── Layer 1: Ambient Coordinate Grid Backdrop ────────────────────── */}
       <div
@@ -85,7 +91,7 @@ export default function Hero() {
 
       {/* ── Hero Text Content (Stagger Animated) ───────────────────────── */}
       <motion.div
-        className="hero-content relative max-w-[1100px] w-full text-center flex flex-col items-center"
+        className="hero-content relative max-w-[1100px] w-full text-center flex flex-col items-center px-2"
         style={{ zIndex: 2 }}
         variants={containerVariants}
         initial="hidden"
@@ -94,7 +100,7 @@ export default function Hero() {
         {/* Badge */}
         <motion.div
           variants={itemVariants}
-          className="hero-badge mb-7 inline-flex items-center gap-2.5 px-5 py-2 rounded-full"
+          className="hero-badge mb-4 sm:mb-7 inline-flex items-center gap-2 px-4 py-1.5 rounded-full"
           style={{
             border: "1px solid var(--border)",
             background: "var(--bg)",
@@ -103,8 +109,8 @@ export default function Hero() {
         >
           <span
             style={{
-              width: 7,
-              height: 7,
+              width: 6,
+              height: 6,
               borderRadius: "50%",
               background: "var(--accent)",
               display: "inline-block",
@@ -112,7 +118,7 @@ export default function Hero() {
             }}
           />
           <span
-            className="text-[11px] font-black tracking-[0.22em] uppercase"
+            className="text-[10px] sm:text-[11px] font-black tracking-[0.2em] uppercase"
             style={{ color: "var(--text-muted)" }}
           >
             AI-Powered Digital Agency
@@ -124,13 +130,15 @@ export default function Hero() {
           variants={itemVariants}
           className="hero-content"
           style={{
-            fontSize: "clamp(38px, 5.5vw, 84px)",
+            fontSize: "clamp(36px, 8.5vw, 84px)",
             fontWeight: 900,
             color: "var(--text)",
-            lineHeight: 1.08,
+            lineHeight: 1.07,
             letterSpacing: "-0.04em",
-            marginTop: "4px",
+            marginTop: "8px",
             textAlign: "center",
+            wordBreak: "keep-all",
+            overflowWrap: "break-word",
           }}
         >
           We Build Intelligent
@@ -140,7 +148,7 @@ export default function Hero() {
             style={{
               backgroundImage: isDark
                 ? "linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%)"
-                : "linear-gradient(135deg, #E83E8C 0%, #1D4ED8 100%)", // Matches the pink-to-blue gradient in logo
+                : "linear-gradient(135deg, #E83E8C 0%, #1D4ED8 100%)",
             }}
           >
             Digital Systems
@@ -153,18 +161,19 @@ export default function Hero() {
           variants={itemVariants}
           className="hero-sub"
           style={{
-            marginTop: "24px",
-            fontSize: "clamp(16px, 1.4vw, 19px)",
+            marginTop: "clamp(14px, 3vw, 24px)",
+            fontSize: "clamp(14px, 3.8vw, 19px)",
             color: "var(--text-muted)",
-            maxWidth: "600px",
-            lineHeight: 1.8,
+            maxWidth: "560px",
+            lineHeight: 1.75,
+            padding: "0 4px",
           }}
         >
           From high-performance software engineering to intelligent AI-driven automation, we engineer next-generation platforms that scale.
         </motion.p>
 
         {/* CTA */}
-        <motion.div variants={itemVariants} className="hero-cta" style={{ marginTop: '40px' }}>
+        <motion.div variants={itemVariants} className="hero-cta" style={{ marginTop: 'clamp(24px, 5vw, 40px)' }}>
           <Link
             to="/consultation"
             className="cta-btn"
@@ -181,9 +190,9 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* ── Scroll Indicator ────────────────────────────────────────────── */}
+      {/* ── Scroll Indicator — hidden on small mobile ──────────────────── */}
       <div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-float"
+        className="hero-scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-float"
         style={{ zIndex: 2, opacity: 0.5 }}
       >
         <span
@@ -226,6 +235,14 @@ export default function Hero() {
           @keyframes float-scroll {
             0%, 100% { transform: translate(-50%, 0); }
             50% { transform: translate(-50%, 8px); }
+          }
+          /* Mobile: hide scroll indicator, compress hero */
+          @media (max-width: 640px) {
+            .hero-scroll-indicator { display: none !important; }
+            .hero-section { min-height: 85svh !important; }
+          }
+          @media (max-width: 375px) {
+            .hero-section { min-height: 90svh !important; }
           }
         `}
       </style>
