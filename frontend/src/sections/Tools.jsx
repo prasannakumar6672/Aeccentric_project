@@ -211,12 +211,62 @@ export default function Tools() {
       <style>{`
         .tools-grid { grid-template-columns: 5fr 7fr; }
         .tools-right-grid { grid-template-columns: 1fr 1fr; }
+        
         @media(max-width:1024px){
           .tools-grid { grid-template-columns: 1fr !important; }
           .tools-right-grid { grid-template-columns: 1fr 1fr !important; }
         }
+        
         @media(max-width:640px){
-          .tools-right-grid { grid-template-columns: 1fr !important; }
+          .tools-grid {
+            gap: 1rem !important;
+          }
+          /* Featured Card adjustments */
+          .tools-grid > div:first-child {
+            padding: 1.75rem 1.25rem !important;
+            min-height: 400px !important;
+            border-radius: 24px !important;
+          }
+          .tools-grid > div:first-child h3 {
+            font-size: 22px !important;
+          }
+          .tools-grid > div:first-child p {
+            font-size: 13.5px !important;
+            line-height: 1.7 !important;
+          }
+          
+          /* Regular Card adjustments */
+          .tools-right-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 1rem !important;
+          }
+          .tools-right-grid > div {
+            padding: 1.25rem 1rem !important;
+            min-height: 240px !important;
+            border-radius: 20px !important;
+          }
+          .tools-right-grid h3 {
+            font-size: 15px !important;
+            margin-bottom: 0.75rem !important;
+            line-height: 1.2 !important;
+          }
+        }
+        
+        @media(max-width:440px){
+          .tools-right-grid {
+            gap: 0.75rem !important;
+          }
+          .tools-right-grid > div {
+            padding: 1rem 0.75rem !important;
+            min-height: 220px !important;
+            border-radius: 16px !important;
+          }
+          .tools-right-grid h3 {
+            font-size: 14px !important;
+          }
+          .tools-right-grid span {
+            font-size: 10px !important;
+          }
         }
       `}</style>
     </section>

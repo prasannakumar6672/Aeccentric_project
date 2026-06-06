@@ -57,7 +57,7 @@ const ServiceCard = ({ service, index }) => {
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <div ref={ref} className="svc-card-outer">
+    <div ref={ref} className="svc-card-sticky-wrapper" style={{ position: 'sticky', top: 0, zIndex: index + 1, height: '100vh' }}>
       <div style={{
         width: '100%', height: '100%', display: 'grid',
         gridTemplateColumns: '1fr 1fr', background: 'var(--bg)', transition: 'background 0.4s',
@@ -72,7 +72,7 @@ const ServiceCard = ({ service, index }) => {
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.05) 100%)' }} />
-          <div style={{ position: 'absolute', top: '2rem', left: '2rem' }}>
+          <div className="svc-badge-wrap" style={{ position: 'absolute', top: '2rem', left: '2rem' }}>
             <motion.div
               initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
@@ -99,8 +99,8 @@ const ServiceCard = ({ service, index }) => {
             style={{ maxWidth: '540px', position: 'relative', zIndex: 1 }}
           >
             {/* Icon */}
-            <div style={{
-              width: 'clamp(44px,6vw,60px)', height: 'clamp(44px,6vw,60px)', borderRadius: '18px', marginBottom: 'clamp(1rem,3vw,2rem)',
+            <div className="svc-card-icon" style={{
+              width: '60px', height: '60px', borderRadius: '18px', marginBottom: '2rem',
               background: 'var(--bg-card)', border: `1px solid ${service.accent}25`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: 'var(--shadow-sm)',
@@ -109,32 +109,32 @@ const ServiceCard = ({ service, index }) => {
             </div>
 
             {/* Title */}
-            <h3 style={{ fontSize: 'clamp(28px,3.5vw,48px)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.04em', color: 'var(--text)', marginBottom: '1rem' }}>
+            <h3 className="svc-card-title" style={{ fontSize: 'clamp(28px,3.5vw,48px)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.04em', color: 'var(--text)', marginBottom: '1rem' }}>
               {service.title}
             </h3>
 
             {/* Description */}
-            <p style={{ fontSize: 'clamp(14px,1.2vw,17px)', color: 'var(--text-muted)', lineHeight: 1.8, maxWidth: '460px', marginBottom: '2rem' }}>
+            <p className="svc-card-desc" style={{ fontSize: 'clamp(14px,1.2vw,17px)', color: 'var(--text-muted)', lineHeight: 1.8, maxWidth: '460px', marginBottom: '2rem' }}>
               {service.description}
             </p>
 
             {/* Points */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '2.5rem' }} className="svc-points-grid">
               {service.points.map((p, i) => (
-                <div key={i} style={{
+                <div key={i} className="svc-point-item" style={{
                   display: 'flex', alignItems: 'center', gap: '10px',
                   padding: '10px 16px', borderRadius: '14px',
                   background: 'var(--bg-card)', border: '1px solid var(--border)',
                   boxShadow: 'var(--shadow-sm)', transition: 'all 0.3s',
                 }}>
                   <span style={{ width: '7px', height: '7px', borderRadius: '50%', flexShrink: 0, background: service.accent }} />
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.01em' }}>{p}</span>
+                  <span className="svc-point-text" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.01em' }}>{p}</span>
                 </div>
               ))}
             </div>
 
             {/* CTA */}
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', display: 'flex', justifyContent: 'center' }}>
+            <div className="svc-card-cta-wrap" style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem', display: 'flex', justifyContent: 'center' }}>
               <Link to={service.link} style={{
                 display: 'inline-flex', alignItems: 'center', gap: '20px',
                 padding: '14px 28px', borderRadius: '999px',
@@ -162,55 +162,117 @@ const ServiceCard = ({ service, index }) => {
 
 export default function Services() {
   return (
-    <section style={{ width: '100%', background: 'var(--bg)', transition: 'background 0.4s' }}>
+    <section className="services-section" style={{ width: '100%', background: 'var(--bg)', transition: 'background 0.4s' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', padding: 'clamp(3rem,7vw,5rem) 1.25rem clamp(2rem,5vw,4rem)' }}>
+      <div className="services-section-header" style={{ textAlign: 'center', padding: '5rem 1.5rem 4rem' }}>
         <div className="pill-badge" style={{ display: 'inline-flex', marginBottom: '1.5rem' }}>
           <span className="pill-dot" />
           Capabilities
         </div>
-        <h2 style={{ fontSize: 'clamp(40px,6vw,80px)', fontWeight: 900, letterSpacing: '-0.05em', color: 'var(--text)', lineHeight: 0.95, marginBottom: '1.25rem' }}>
+        <h2 className="services-section-title" style={{ fontSize: 'clamp(40px,6vw,80px)', fontWeight: 900, letterSpacing: '-0.05em', color: 'var(--text)', lineHeight: 0.95, marginBottom: '1.25rem' }}>
           Our Services.
         </h2>
-        <p style={{ fontSize: 'clamp(16px,1.5vw,20px)', color: 'var(--text-muted)', maxWidth: '560px', margin: '0 auto', lineHeight: 1.7 }}>
-          Engineering, AI automation, branding & scalable digital systems â€” built for modern growth.
+        <p className="services-section-desc" style={{ fontSize: 'clamp(16px,1.5vw,20px)', color: 'var(--text-muted)', maxWidth: '560px', margin: '0 auto', lineHeight: 1.7 }}>
+          Engineering, AI automation, branding & scalable digital systems — built for modern growth.
         </p>
       </div>
 
       {/* Sticky cards */}
-      <div style={{ width: '100%' }}>
+      <div className="svc-cards-container" style={{ width: '100%' }}>
         {services.map((s, i) => <ServiceCard key={i} service={s} index={i} />)}
       </div>
 
       <style>{`
-        .svc-card-outer {
-          position: sticky;
-          top: 0;
-          z-index: 1;
-          height: 100vh;
-        }
         .svc-grid { grid-template-columns: 1fr 1fr; }
         .svc-img-col { height: 100vh; }
-        .svc-content-col { padding: clamp(2rem,5vw,5rem); }
         .svc-points-grid { grid-template-columns: 1fr 1fr; }
-        @media (max-width: 768px) {
-          .svc-card-outer {
+        
+        @media(max-width:1024px){
+          .services-section-header {
+            padding: 4rem 1.5rem 2.5rem !important;
+          }
+          .services-section-title {
+            font-size: clamp(2.2rem, 5vw, 3.5rem) !important;
+          }
+          .services-section-desc {
+            font-size: 16px !important;
+          }
+          .svc-card-sticky-wrapper {
             position: relative !important;
             height: auto !important;
-            z-index: auto !important;
+            top: auto !important;
+            z-index: 1 !important;
+            margin-bottom: 2rem !important;
+            padding: 0 1.5rem !important;
           }
           .svc-grid {
             grid-template-columns: 1fr !important;
+            border: 1px solid var(--border) !important;
+            border-radius: var(--radius-xl) !important;
+            overflow: hidden !important;
+            background: var(--bg-card) !important;
+            height: auto !important;
+            box-shadow: var(--shadow-md) !important;
           }
           .svc-img-col {
-            height: 200px !important;
+            height: 320px !important;
+          }
+          .svc-badge-wrap {
+            top: 1.25rem !important;
+            left: 1.25rem !important;
           }
           .svc-content-col {
-            padding: 1.25rem !important;
+            padding: 2.25rem 1.75rem !important;
+          }
+          .svc-card-icon {
+            width: 50px !important;
+            height: 50px !important;
+            border-radius: 14px !important;
+            margin-bottom: 1.5rem !important;
+          }
+          .svc-card-icon svg {
+            width: 22px !important;
+            height: 22px !important;
+          }
+          .svc-card-title {
+            font-size: clamp(22px, 3.5vw, 32px) !important;
+            margin-bottom: 0.75rem !important;
+          }
+          .svc-card-desc {
+            font-size: 14px !important;
+            margin-bottom: 1.5rem !important;
+            line-height: 1.7 !important;
+          }
+          .svc-points-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.75rem !important;
+            margin-bottom: 2rem !important;
+          }
+          .svc-point-item {
+            padding: 8px 12px !important;
+            border-radius: 10px !important;
+          }
+          .svc-point-text {
+            font-size: 12px !important;
+          }
+          .svc-card-cta-wrap {
+            padding-top: 1.5rem !important;
+          }
+        }
+        
+        @media(max-width:560px){
+          .svc-card-sticky-wrapper {
+            padding: 0 1.25rem !important;
+          }
+          .svc-img-col {
+            height: 220px !important;
+          }
+          .svc-content-col {
+            padding: 1.75rem 1.25rem !important;
           }
           .svc-points-grid {
             grid-template-columns: 1fr !important;
-            gap: 0.5rem !important;
+            gap: 0.6rem !important;
           }
         }
       `}</style>

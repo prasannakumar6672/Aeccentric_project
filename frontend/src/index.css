@@ -620,79 +620,171 @@ p {
   scrollbar-width: none;
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   MOBILE-FIRST PREMIUM UX OVERRIDES (Stripe / Linear / Vercel inspired)
-   Target: 320px – 768px viewports
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ==========================================================================
+   MOBILE-FIRST GLOBAL OVERRIDES FOR NEXUS-SERVICE-PAGE TEMPLATES
+   Applied fluidly across all sub-pages for AECCENTRIC to increase density.
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .nexus-service-page .page {
+    padding: 0 20px 80px !important;
+  }
+  .nexus-service-page .hero {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem !important;
+    padding: 48px 0 40px !important;
+  }
+  .nexus-service-page .stats-row {
+    grid-template-columns: repeat(4, 1fr) !important;
+    margin-top: 32px !important;
+  }
+  .nexus-service-page .stat-cell {
+    padding: 16px 14px !important;
+  }
+  .nexus-service-page .stat-val {
+    font-size: 28px !important;
+  }
+}
 
 @media (max-width: 768px) {
-
-  /* ── Mobile Spacing System ─────────────────────────────────────── */
-  :root {
-    --section-py: 3.5rem;
+  .nexus-service-page .page {
+    padding: 0 16px 60px !important;
   }
-
-  /* All marketing sections get compressed vertical rhythm */
-  section {
-    padding-top: 3.5rem !important;
-    padding-bottom: 3.5rem !important;
+  
+  /* Hero adjustments for compact mobile height */
+  .nexus-service-page .hero {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    padding: 32px 0 28px !important;
   }
-
-  /* ── Mobile Typography Scale ──────────────────────────────────── */
-  :root {
-    --text-hero:    clamp(34px, 9vw, 52px);
-    --text-display: clamp(26px, 7vw, 40px);
-    --text-heading: clamp(22px, 5.5vw, 32px);
-    --text-subhead: clamp(15px, 4vw, 18px);
-    --text-body:    15px;
+  .nexus-service-page .hero-title {
+    font-size: clamp(2rem, 7vw, 3rem) !important;
+    margin-bottom: 12px !important;
+    line-height: 1.1 !important;
   }
-
-  /* ── CTA Button — Compact 44px touch target ───────────────────── */
-  .cta-btn {
-    padding: 12px 24px !important;
-    font-size: 12px !important;
+  .nexus-service-page .hero-desc {
+    font-size: 14px !important;
+    margin-bottom: 20px !important;
+    line-height: 1.65 !important;
+    max-width: 100% !important;
+  }
+  .nexus-service-page .hero-btns {
+    margin-bottom: 24px !important;
+  }
+  .nexus-service-page .hero-img-wrap {
+    aspect-ratio: 16/10 !important;
+    max-height: 240px !important;
+  }
+  
+  /* Reduced section paddings */
+  .nexus-service-page .section {
+    padding: 36px 0 0 !important;
+  }
+  .nexus-service-page .sec-title {
+    font-size: clamp(1.6rem, 5.5vw, 2.2rem) !important;
+    margin-bottom: 8px !important;
+  }
+  .nexus-service-page .sec-sub {
+    font-size: 13.5px !important;
+    margin-bottom: 24px !important;
+    line-height: 1.65 !important;
+  }
+  
+  /* Force 2×2 grid systems fluidly */
+  .nexus-service-page .svc-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
+  }
+  .nexus-service-page .proc-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .nexus-service-page .tech-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .nexus-service-page .proof-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .nexus-service-page .stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1px !important;
+    margin-top: 24px !important;
+  }
+  
+  /* Compact cards */
+  .nexus-service-page .svc-card,
+  .nexus-service-page .proc-card,
+  .nexus-service-page .proof-card,
+  .nexus-service-page .tech-card {
+    padding: 1.25rem 1rem !important;
     border-radius: 12px !important;
-    min-height: 44px;
   }
-
-  .cta-btn .cta-arrow {
-    width: 24px !important;
-    height: 24px !important;
+  .nexus-service-page .svc-icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+    margin-bottom: 12px !important;
   }
-
-  /* ── Pill Badge Compact ───────────────────────────────────────── */
-  .pill-badge {
-    padding: 5px 14px !important;
-    font-size: 10px !important;
-    gap: 8px !important;
+  .nexus-service-page .svc-icon svg {
+    width: 18px !important;
+    height: 18px !important;
   }
-
-  /* ── Section label ───────────────────────────────────────────── */
-  .section-label {
-    font-size: 10px !important;
-    letter-spacing: 0.2em !important;
+  .nexus-service-page .svc-title,
+  .nexus-service-page .proc-title {
+    font-size: 14px !important;
+    margin-bottom: 6px !important;
   }
-
-  /* ── WhyChooseUs card grid ────────────────────────────────────── */
-  .why-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 0.75rem !important;
+  .nexus-service-page .svc-desc,
+  .nexus-service-page .proc-desc {
+    font-size: 12px !important;
+    line-height: 1.55 !important;
+    margin-bottom: 12px !important;
   }
-
-  .why-card {
-    padding: 1.25rem !important;
-    border-radius: 20px !important;
+  
+  /* Hide process connectors / arrows to fit side-by-side */
+  .nexus-service-page .proc-arrow {
+    display: none !important;
+  }
+  .nexus-service-page .proc-num-bg {
+    font-size: 48px !important;
+  }
+  
+  /* Action row & FAQ scaling */
+  .nexus-service-page .book-wrap,
+  .nexus-service-page .footer-cta {
+    padding: 24px 20px !important;
+    border-radius: 16px !important;
+    gap: 1.5rem !important;
+  }
+  .nexus-service-page .book-title,
+  .nexus-service-page .footer-cta-title {
+    font-size: 18px !important;
+  }
+  .nexus-service-page .book-sub,
+  .nexus-service-page .footer-cta-sub {
+    font-size: 12.5px !important;
+  }
+  .nexus-service-page .faq-btn {
+    padding: 14px 16px !important;
+  }
+  .nexus-service-page .faq-q {
+    font-size: 13px !important;
+  }
+  .nexus-service-page .faq-a {
+    padding: 0 16px 14px !important;
+    font-size: 12.5px !important;
   }
 }
 
 @media (max-width: 480px) {
-  .why-grid {
+  .nexus-service-page .svc-grid,
+  .nexus-service-page .proc-grid {
     grid-template-columns: 1fr !important;
+    gap: 12px !important;
   }
-
-  section {
-    padding-top: 3rem !important;
-    padding-bottom: 3rem !important;
+  .nexus-service-page .stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }

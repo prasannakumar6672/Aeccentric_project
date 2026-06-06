@@ -108,8 +108,44 @@ export default function WhyChooseUs() {
 
       <style>{`
         .why-grid { grid-template-columns: repeat(4,1fr); }
-        @media(max-width:1024px){ .why-grid { grid-template-columns: repeat(2,1fr) !important; } }
-        @media(max-width:520px)  { .why-grid { grid-template-columns: 1fr !important; } }
+        @media(max-width:1024px){
+          .why-grid {
+            grid-template-columns: repeat(2,1fr) !important;
+            gap: 1rem !important;
+          }
+          .why-card {
+            padding: 1.5rem 1.25rem !important;
+            border-radius: 20px !important;
+          }
+        }
+        @media(max-width:520px){
+          .why-grid {
+            grid-template-columns: repeat(2,1fr) !important;
+            gap: 0.75rem !important;
+          }
+          .why-card {
+            padding: 1.25rem 1rem !important;
+            border-radius: 16px !important;
+          }
+          .why-icon {
+            width: 42px !important;
+            height: 42px !important;
+            border-radius: 12px !important;
+            margin-bottom: 1rem !important;
+          }
+          .why-icon svg {
+            width: 18px !important;
+            height: 18px !important;
+          }
+          .why-card h3 {
+            font-size: 15px !important;
+            margin-bottom: 0.4rem !important;
+          }
+          .why-card p {
+            font-size: 12px !important;
+            line-height: 1.6 !important;
+          }
+        }
         .why-card:hover .why-icon { background: var(--accent) !important; color: #fff !important; border-color: var(--accent) !important; }
       `}</style>
     </section>

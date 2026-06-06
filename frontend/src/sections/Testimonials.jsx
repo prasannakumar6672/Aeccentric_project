@@ -119,7 +119,50 @@ const css = `
 .reveal-delay-2 { transition-delay: 0.30s; }
 
 @media (max-width: 1024px) { .testi__layout { grid-template-columns: 1fr; } .testi__tabs { flex-direction: row; overflow-x: auto; padding-bottom: 0.5rem; } .testi__tab { flex-shrink: 0; } }
-@media (max-width: 640px) { .testi__main { padding: 1.5rem; } .testi__quote { font-size: 0.95rem; } }
+@media (max-width: 768px) {
+  .testi {
+    --testi-py: 3rem !important;
+  }
+  .testi__header {
+    margin-bottom: 2.25rem !important;
+  }
+  .testi__main {
+    padding: 1.75rem !important;
+    border-radius: 16px !important;
+  }
+  .testi__quote {
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1.25rem !important;
+  }
+}
+@media (max-width: 520px) {
+  .testi__main {
+    padding: 1.25rem !important;
+  }
+  .testi__quote-mark {
+    font-size: 3.5rem !important;
+    top: 0.5rem !important;
+    left: 1rem !important;
+  }
+  .testi__quote {
+    padding-top: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+  .testi__meta {
+    gap: 0.75rem !important;
+  }
+  .testi__avatar {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .testi__company-tag {
+    margin-left: 0 !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin-top: 0.5rem !important;
+  }
+}
 `
 
 export default function Testimonials() {
@@ -145,7 +188,7 @@ export default function Testimonials() {
   return (
     <>
       <style>{css}</style>
-      <section ref={ref} className="testi section" style={{ width: '100%', padding: '6rem 0', overflow: 'hidden' }}>
+      <section ref={ref} className="testi section" style={{ width: '100%', padding: 'var(--testi-py, 6rem) 0', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 1.5rem', position: 'relative', zIndex: 1 }}>
           <div className="testi__header">
             <p className={`section-label reveal${visible ? ' in' : ''}`}>Client Stories</p>

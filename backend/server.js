@@ -97,7 +97,7 @@ app.use((err, _req, res, _next) => {
   if (status >= 500) {
     console.error(err.stack);
   }
-  res.status(status).json({ success: false, message: status >= 500 ? 'Internal server error' : err.message });
+  res.status(status).json({ success: false, message: err.message, stack: err.stack });
 });
 
 /* ── Start ── */
