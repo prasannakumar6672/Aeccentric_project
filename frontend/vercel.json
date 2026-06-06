@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://aeccentric-project-n103.onrender.com/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

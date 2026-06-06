@@ -26,7 +26,10 @@ validateEnv();
 
 const app = express();
 const PORT = env.port;
-const allowedOrigins = env.clientUrl.split(',').map((origin) => origin.trim()).filter(Boolean);
+const allowedOrigins = env.clientUrl
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 600,
@@ -39,10 +42,18 @@ app.set('trust proxy', 1);
 app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true);
+    const normalizedOrigin = origin.trim().replace(/\/+$/, '');
+    if (
+      allowedOrigins.includes(normalizedOrigin) ||
+      normalizedOrigin.endsWith('.vercel.app') ||
+      normalizedOrigin.includes('aeccentric') ||
+      normalizedOrigin.startsWith('http://localhost:') ||
+      normalizedOrigin.startsWith('http://127.0.0.1:')
+    ) {
       return callback(null, true);
     }
-    return callback(new Error('Not allowed by CORS'));
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
   },
   credentials: true,
 }));
@@ -93,11 +104,21 @@ app.use((err, _req, res, _next) => {
     return res.status(409).json({ success: false, message: `${field} already exists` });
   }
 
-  const status = err.statusCode || err.status || 500;
+  let status = err.statusCode || err.status;
+  if (!status && res.statusCode && res.statusCode !== 200) {
+    status = res.statusCode;
+  }
+  status = status || 500;
+
   if (status >= 500) {
     console.error(err.stack);
   }
-  res.status(status).json({ success: false, message: err.message, stack: err.stack });
+
+  res.status(status).json({
+    success: false,
+    message: status >= 500 ? 'Internal server error' : err.message,
+    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
+  });
 });
 
 /* ── Start ── */
